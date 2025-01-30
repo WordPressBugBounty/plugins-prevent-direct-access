@@ -3,7 +3,7 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.7
+Version: 2.8.8
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
@@ -22,7 +22,7 @@ define('PDA_HOME_PAGE', 'https://preventdirectaccess.com/?utm_source=user-websit
 define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&amp;utm_medium=settings&amp;utm_campaign=sidebar-cta');
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.7');
+define('PDAF_VERSION', '2.8.8');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 
@@ -1065,88 +1065,186 @@ class Pda_Admin
     {
         $pda_option       = get_option('FREE_PDA_SETTINGS');
         if (is_array($pda_option) && array_key_exists('disable_right_click', $pda_option) && $pda_option['disable_right_click'] === "on" ) {
-            $noscript_message            = apply_filters('pda_noscript_message', 'Please enable JavaScript in your browser to view the content');
-            $disable_right_click_message = apply_filters('pda_disable_right_click_message', 'Right-click is disabled');
-            $show_alert                  = apply_filters('pda_show_alert_on_right_clicks', true);
+
+            $noscript_message                   = apply_filters('pda_noscript_message', 'Please enable JavaScript in your browser to view the content');
+            $disable_right_click_message        = apply_filters('pda_disable_right_click_message', __( 'Right-click is disabled' , 'prevent-direct-access'));
+            $show_alert                         = apply_filters('pda_show_alert_on_right_clicks', true);
+            $developer_tools_message            = apply_filters('pda_disable_developer_tools_message', __('Please close the developer tools to continue using this site', 'prevent-direct-access'));
+            $disable_developer_tools_message    = apply_filters('pda_disable_developer_tools', true);
+            $pda_disable_tool_tipe              = apply_filters('pda_disable_tool_tipe', true);
+
             do_action('pda_lite_disable_right_click_on_iframe');
 
             ?>
+
             <noscript>
                 <div style="position: fixed; top: 0px; left: 0px; z-index: 30000000;
                 height: 100%; width: 100%; background-color: #FFFFFF">
                     <p style="margin-left: 10px"><?php esc_html_e($noscript_message, 'prevent-direct-access'); ?></p>
                 </div>
             </noscript>
+
             <script>
+
               const show_alert = "<?php echo $show_alert; ?>";
+              const pda_disable_tool_tipe = "<?php echo $pda_disable_tool_tipe; ?>";
+              const disable_developer_tools_message = "<?php echo $disable_developer_tools_message; ?>";
+               
+                
+                document.addEventListener('contextmenu', function (event) {
+                   
+                    if ( show_alert ) {
 
-              document.addEventListener('contextmenu', event => {
-                if (show_alert) {
-                    alert('<?php esc_attr_e($disable_right_click_message, 'prevent-direct-access'); ?>');
-                }
-                event.preventDefault()
-              });
-              document.onkeydown = function (e) {
-                // disable F12 key
-                if(e.keyCode == 123) {
-                  return false;
-                }
-                var ctrlOrMeta = e.ctrlKey || e.metaKey;
+                        event.preventDefault(); 
 
-                // disable I key
-                if(ctrlOrMeta && e.shiftKey && e.keyCode == 73){
-                  return false;
-                }
+                        if( pda_disable_tool_tipe ){
 
-                // disable J key
-                if(ctrlOrMeta && e.shiftKey && e.keyCode == 74) {
-                  return false;
-                }
+                            const existingMessage = document.querySelector('.custom-context-message');
+                            if (existingMessage) {
+                                existingMessage.remove();
+                            }
+                            
+                            const message = document.createElement('div');
+                            message.className = 'custom-context-message';
+                            message.textContent = '<?php esc_attr_e($disable_right_click_message, 'prevent-direct-access'); ?>';
+                            
+                            // Style the message
+                            Object.assign(message.style, {
+                                position: 'absolute',
+                                top: `${event.clientY + window.scrollY}px`,
+                                left: `${event.clientX + window.scrollX}px`,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                color: '#fff',
+                                padding: '5px 10px',
+                                borderRadius: '5px',
+                                zIndex: '1000',
+                                pointerEvents: 'none', // Prevent interference with the user’s actions
+                                fontSize: '14px',
+                            });
 
-                // disable P key
-                if(ctrlOrMeta && e.keyCode == 80) {
-                  return false;
-                }
+                            
+                            document.body.appendChild(message);
+                            setTimeout(() => {
+                                message.remove();
+                            }, 2000); 
 
-                // disable S key
-                if(ctrlOrMeta && e.keyCode == 83) {
-                  return false;
-                }
+                        }
 
-                // disable U key
-                if(ctrlOrMeta && e.keyCode == 85) {
-                  return false;
-                }
+                    }
+                });
 
-                // disable D key
-                if((ctrlOrMeta && e.keyCode == 68) || (e.altKey && e.keyCode == 68)) {
-                  return false;
-                }
 
-                // disable F key
-                if(ctrlOrMeta && e.keyCode == 70) {
-                  return false;
-                }
+                if( disable_developer_tools_message ){ 
 
-                // disable G key
-                if(ctrlOrMeta && e.keyCode == 71) {
-                  return false;
-                }
+                    document.addEventListener('keydown', function (e) {
+                        if (
+                            e.key === "F12" || // Block F12 key
+                            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J' || e.key === 'U')) // Block Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+Shift+U
+                        ) {
+                            e.preventDefault();
+                            
+                        }
+                    });
 
-                // disable F3 key
-                if (e.keyCode == 114) {
-                    return false;
-                }
+                    // Detect if the DevTools is open
+                    (function detectDevTools() {
+                        const threshold = 160; // Minimum height of the DevTools panel
+                        const devtools = {
+                            open: false,
+                            orientation: null,
+                        };
 
-                // disable shift + F3 key
-                if (e.shiftKey && e.keyCode == 114) {
-                    return false;
-                }
+                        const check = () => {
+                            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                            const orientation = widthThreshold ? 'vertical' : 'horizontal';
 
-                if(ctrlOrMeta && e.shiftKey && e.keyCode == 71) {
-                    return false;
-                }
-              }
+                            if (
+                                !(heightThreshold && widthThreshold) &&
+                                ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) ||
+                                    widthThreshold ||
+                                    heightThreshold)
+                            ) {
+                                if (!devtools.open || devtools.orientation !== orientation) {
+                                    devtools.open = true;
+                                    devtools.orientation = orientation;
+                                    alert('<?php echo $developer_tools_message; ?>');
+                                    window.location.reload(); // Optionally, reload the page if DevTools is detected
+                                }
+                            } else {
+                                devtools.open = false;
+                                devtools.orientation = null;
+                            }
+                        };
+
+                        setInterval(check, 500); // Check every 500ms
+                    })();
+
+
+                document.onkeydown = function (e) {
+                    // disable F12 key
+                    if(e.keyCode == 123) {
+                      return false;
+                    }
+                    var ctrlOrMeta = e.ctrlKey || e.metaKey;
+
+                    // disable I key
+                    if(ctrlOrMeta && e.shiftKey && e.keyCode == 73){
+                      return false;
+                    }
+
+                    // disable J key
+                    if(ctrlOrMeta && e.shiftKey && e.keyCode == 74) {
+                      return false;
+                    }
+
+                    // disable P key
+                    if(ctrlOrMeta && e.keyCode == 80) {
+                      return false;
+                    }
+
+                    // disable S key
+                    if(ctrlOrMeta && e.keyCode == 83) {
+                      return false;
+                    }
+
+                    // disable U key
+                    if(ctrlOrMeta && e.keyCode == 85) {
+                      return false;
+                    }
+
+                    // disable D key
+                    if((ctrlOrMeta && e.keyCode == 68) || (e.altKey && e.keyCode == 68)) {
+                      return false;
+                    }
+
+                    // disable F key
+                    if(ctrlOrMeta && e.keyCode == 70) {
+                      return false;
+                    }
+
+                    // disable G key
+                    if(ctrlOrMeta && e.keyCode == 71) {
+                      return false;
+                    }
+
+                    // disable F3 key
+                    if (e.keyCode == 114) {
+                        return false;
+                    }
+
+                    // disable shift + F3 key
+                    if (e.shiftKey && e.keyCode == 114) {
+                        return false;
+                    }
+
+                    if(ctrlOrMeta && e.shiftKey && e.keyCode == 71) {
+                        return false;
+                    }
+                  }
+
+             } 
+
             </script>
             <style>
                 /* Disable select text */

@@ -3,8 +3,8 @@ Contributors: gaupoit, rexhoang, wpdafiles, buildwps
 Tags: folder protection, protection, downloads, uploads, copy protection
 Requires at least: 4.7
 Requires PHP: 5.6.1
-Tested up to: 6.5.5
-Stable tag: 2.8.7
+Tested up to: 6.7.1
+Stable tag: 2.8.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,10 @@ The Lite version of this plugin only supports Apache, Nginx, and IIS single site
 8. Once your file is protected, it’ll have a red border.
 
 == Changelog ==
+
+= 2.8.8 Jan 28, 2025 =
+* [Improvement] Added customizable right-click alert with tooltip message.
+* [Improvement] Enhanced developer tools prevention with shortcut blocking and detection.
 
 = 2.8.7 July 01, 2024 =
 * [Bug Fix] Resolved issues with Protection and Unprotection links for custom upload directories without year-month paths.
