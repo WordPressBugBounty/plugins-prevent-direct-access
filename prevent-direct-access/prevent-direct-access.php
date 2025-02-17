@@ -3,15 +3,15 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8
+Version: 2.8.8.1
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
 License: GPL
 Text Domain: prevent-direct-access
 Domain Path: /languages
-
 */
+
 if (! defined('ABSPATH') ) {
     exit;
 }
@@ -22,7 +22,7 @@ define('PDA_HOME_PAGE', 'https://preventdirectaccess.com/?utm_source=user-websit
 define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&amp;utm_medium=settings&amp;utm_campaign=sidebar-cta');
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8');
+define('PDAF_VERSION', '2.8.8.1');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 
@@ -1072,7 +1072,7 @@ class Pda_Admin
             $developer_tools_message            = apply_filters('pda_disable_developer_tools_message', __('Please close the developer tools to continue using this site', 'prevent-direct-access'));
             $disable_developer_tools_message    = apply_filters('pda_disable_developer_tools', true);
             $pda_disable_tool_tipe              = apply_filters('pda_disable_tool_tipe', true);
-
+            $is_mobile                          = wp_is_mobile();
             do_action('pda_lite_disable_right_click_on_iframe');
 
             ?>
@@ -1089,6 +1089,7 @@ class Pda_Admin
               const show_alert = "<?php echo $show_alert; ?>";
               const pda_disable_tool_tipe = "<?php echo $pda_disable_tool_tipe; ?>";
               const disable_developer_tools_message = "<?php echo $disable_developer_tools_message; ?>";
+              var is_mobile = "<?php echo $is_mobile; ?>";
                
                 
                 document.addEventListener('contextmenu', function (event) {
@@ -1136,50 +1137,53 @@ class Pda_Admin
 
                 if( disable_developer_tools_message ){ 
 
-                    document.addEventListener('keydown', function (e) {
+                // Detect if the DevTools is open
+                (function detectDevTools() {
+                    const threshold = 160; // Minimum height of the DevTools panel
+                    const devtools = {
+                        open: false,
+                        orientation: null,
+                    };
+
+                    const check = () => {
+                        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                        const orientation = widthThreshold ? 'vertical' : 'horizontal';
+
                         if (
-                            e.key === "F12" || // Block F12 key
-                            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J' || e.key === 'U')) // Block Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+Shift+U
+                            !(heightThreshold && widthThreshold) &&
+                            ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) ||
+                                widthThreshold ||
+                                heightThreshold)
                         ) {
-                            e.preventDefault();
-                            
-                        }
-                    });
+                            if (!devtools.open || devtools.orientation !== orientation) {
+                                devtools.open = true;
+                                devtools.orientation = orientation;
+                                document.addEventListener('keydown', function (e) {
+                                    if (
+                                        e.key === "F12" || // Block F12 key
+                                        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J' || e.key === 'U')) // Block Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+Shift+U
+                                        || e.key === 'Escape'
+                                    ) {
+                                        e.preventDefault();
+                                    }
+                                });
 
-                    // Detect if the DevTools is open
-                    (function detectDevTools() {
-                        const threshold = 160; // Minimum height of the DevTools panel
-                        const devtools = {
-                            open: false,
-                            orientation: null,
-                        };
+                                if ( !is_mobile ) { // Check the is mobile device or not. 
 
-                        const check = () => {
-                            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                            const orientation = widthThreshold ? 'vertical' : 'horizontal';
-
-                            if (
-                                !(heightThreshold && widthThreshold) &&
-                                ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) ||
-                                    widthThreshold ||
-                                    heightThreshold)
-                            ) {
-                                if (!devtools.open || devtools.orientation !== orientation) {
-                                    devtools.open = true;
-                                    devtools.orientation = orientation;
                                     alert('<?php echo $developer_tools_message; ?>');
                                     window.location.reload(); // Optionally, reload the page if DevTools is detected
-                                }
-                            } else {
-                                devtools.open = false;
-                                devtools.orientation = null;
+                                } 
+                                
                             }
-                        };
+                        } else {
+                            devtools.open = false;
+                            devtools.orientation = null;
+                        }
+                    };
 
-                        setInterval(check, 500); // Check every 500ms
-                    })();
-
+                    setInterval(check, 500); // Check every 500ms
+                })();
 
                 document.onkeydown = function (e) {
                     // disable F12 key

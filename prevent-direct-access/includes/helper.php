@@ -15,7 +15,7 @@ class Pda_Helper {
 	*/
 	public static function generate_unique_string() {
 		// Return uniq id
-		return uniqid();
+		return bin2hex(random_bytes(7));
 	}
 
 	/**
