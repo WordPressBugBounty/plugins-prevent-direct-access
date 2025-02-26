@@ -3,7 +3,7 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8.1
+Version: 2.8.8.2
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
@@ -22,7 +22,7 @@ define('PDA_HOME_PAGE', 'https://preventdirectaccess.com/?utm_source=user-websit
 define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&amp;utm_medium=settings&amp;utm_campaign=sidebar-cta');
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8.1');
+define('PDAF_VERSION', '2.8.8.2');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 
@@ -1064,7 +1064,10 @@ class Pda_Admin
     function prevent_right_click()
     {
         $pda_option       = get_option('FREE_PDA_SETTINGS');
-        if (is_array($pda_option) && array_key_exists('disable_right_click', $pda_option) && $pda_option['disable_right_click'] === "on" ) {
+        $is_admin                           = is_admin();
+        $is_administrator                   = current_user_can( 'administrator' );
+        $is_editor                          = current_user_can( 'editor' );
+        if (is_array($pda_option) && array_key_exists('disable_right_click', $pda_option) && $pda_option['disable_right_click'] === "on" && !$is_admin && !$is_administrator && !$is_editor ) {
 
             $noscript_message                   = apply_filters('pda_noscript_message', 'Please enable JavaScript in your browser to view the content');
             $disable_right_click_message        = apply_filters('pda_disable_right_click_message', __( 'Right-click is disabled' , 'prevent-direct-access'));
