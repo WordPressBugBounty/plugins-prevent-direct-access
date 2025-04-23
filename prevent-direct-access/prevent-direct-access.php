@@ -3,7 +3,7 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8.2
+Version: 2.8.8.3
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
@@ -22,7 +22,7 @@ define('PDA_HOME_PAGE', 'https://preventdirectaccess.com/?utm_source=user-websit
 define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&amp;utm_medium=settings&amp;utm_campaign=sidebar-cta');
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8.2');
+define('PDAF_VERSION', '2.8.8.3');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 

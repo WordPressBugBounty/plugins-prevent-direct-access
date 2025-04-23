@@ -68,7 +68,7 @@ if ( ! class_exists('PDA_Lite_API') ) {
         }
 
         public function pda_lite_custom_permission_check() {
-			return current_user_can('edit_posts') || current_user_can('manage_options');
+			return current_user_can( 'manage_options' );
 		 }
         /**
          * List Private Links
