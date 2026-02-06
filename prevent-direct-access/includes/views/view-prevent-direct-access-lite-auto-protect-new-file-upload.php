@@ -5,7 +5,7 @@
 *
 */
 ?>
-<tr>
+<tr class="pda-gray-out">
     <td>
         <label class="pda_switch" for="pda_auto_protect_new_files">
             <input type="checkbox" id="pda_auto_protect_new_files"
@@ -21,7 +21,7 @@
 				<span class="pda_upgrade_advice">
 					<a rel="noopener" target="_blank" href="https://preventdirectaccess.com/pricing/">
 						<span class="pda_dashicons dashicons dashicons-lock">
-							<span class="pda_upgrade_tooltip"><?php echo esc_html__( 'Available in Gold version', 'prevent-direct-access' ) ?></span>
+							<span class="pda_upgrade_tooltip"><?php echo esc_html__( 'Upgrade to Gold', 'prevent-direct-access' ) ?></span>
 						</span>
 					</a>
 				</span>	

@@ -19,5 +19,11 @@ $file_access = Pda_Helper::get_fap_setting( $pda_settings );
 	        <option value="admin_users" <?php if ( $file_access == "admin_users" ) { echo "selected";	} ?> ><?php echo esc_html__( 'Admin users', 'prevent-direct-access-gold' ) ?></option>
 	        <option value="author" <?php if ( $file_access == "author" ) { echo "selected"; } ?> ><?php echo esc_html__( 'The file\'s author', 'prevent-direct-access-gold' ) ?></option>
         </select>
+        <p>
+		    <?php echo esc_html__( 'Want more options? E.g: Logged-in users, custom roles, and more ', 'prevent-direct-access' ); ?>
+		    <a rel="noopener" target="_blank" href="https://preventdirectaccess.com/pricing/">
+						<?php echo esc_html__( 'Upgrade to Gold', 'prevent-direct-access' ) ?>
+			</a>
+	    </p>
     </td>
 </tr>

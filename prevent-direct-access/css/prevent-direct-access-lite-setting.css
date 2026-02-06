@@ -516,3 +516,7 @@ div#pda_right_column_metaboxes ul {
 div#pda_right_column_metaboxes .main_container {
     padding-top: 20px;
 }
+
+tr.pda-gray-out{
+    color: #c6b2b2;
+}

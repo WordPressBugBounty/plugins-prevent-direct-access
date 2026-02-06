@@ -3,8 +3,8 @@ Contributors: gaupoit, rexhoang, wpdafiles, buildwps
 Tags: folder protection, protection, downloads, uploads, copy protection
 Requires at least: 4.7
 Requires PHP: 5.6.1
-Tested up to: 6.8
-Stable tag: 2.8.8.3
+Tested up to: 6.9
+Stable tag: 2.8.8.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,12 @@ The Lite version of this plugin only supports Apache, Nginx, and IIS single site
 8. Once your file is protected, it’ll have a red border.
 
 == Changelog ==
+= 2.8.8.4 Dec 23, 2025 =
+* [Feature] Added an onboarding Opt-In/Opt-Out screen on first plugin activation, allowing users to grant or deny analytics consent.
+* [Feature] Introduced GreyLayout for locked premium features, displaying all Gold features in the Free version as disabled/locked with clear labels.
+* [Improvement] Improved the initial setup flow to provide a clearer and more compliant user experience.
+* [Improvement] Refined the UI/UX to better distinguish between Free and Gold features.
+
 = 2.8.8.3 Apr 23, 2025 =
 * [Improvement] Security: Restrict REST API access to file protection endpoints to admin users only.
 

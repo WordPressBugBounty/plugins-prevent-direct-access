@@ -111,10 +111,10 @@ function pda_settings() {
                 <div class="pda-notice-content">
                     <h3><?php _e( 'Do you like Prevent Direct Access? You\'ll love its Gold version!'); ?></h3>
                     <p><?php _e( 'Please upgrade to ' ); ?>
-                        <a target="_blank" href="<?php echo sprintf(constant( 'PDA_HOME_PAGE' ), 'user-website' , "settings-notification-link") ?>" target="_blank"><?php _e( 'Gold version' ); ?></a> to change default settings!</p>
+                        <a target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website' , "settings-notification-link") ?>" target="_blank"><?php _e( 'Gold version' ); ?></a> to change default settings!</p>
                 </div>
                 <div class="pda-install-now">
-                    <a class="button pda-install-button" target="_blank" href="<?php echo sprintf(constant( 'PDA_HOME_PAGE' ), 'user-website', 'settings-notification-cta') ?>"><i class="dashicons dashicons-download"></i><?php _e( 'Get it now!' ); ?></a>
+                    <a class="button pda-install-button" target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website', 'settings-notification-cta') ?>"><i class="dashicons dashicons-download"></i><?php _e( 'Get it now!' ); ?></a>
                 </div>
             </div>
         </div>

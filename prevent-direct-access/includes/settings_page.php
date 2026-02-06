@@ -128,7 +128,7 @@ class PDA_SettingsPage
                 <form id="pda_free_ip_form" method="post">
                     <input type="hidden" value="<?php echo wp_create_nonce('pda_ajax_nonce_v3'); ?>" id="nonce_pda_v3"/>
                     <div style="margin-bottom:10px; margin-top: 10px">
-                        <p>Blacklist these IP addresses: stop the following IP addresses from accessing private download links</p>
+                        <p>Deny list these IP addresses: stop the following IP addresses from accessing private download links</p>
                     </div>
                     <input id="pda_free_pl_blacklist_ips" name="ip_lock" value="<?php _e($ip_lock); ?>" /><br>
                     <p class="description">Use the asterisk (*) for wildcard matching, e.g. 7.7.7.* will match IP from 7.7.7.0 to 7.7.7.255</p><br>
@@ -194,8 +194,24 @@ class PDA_SettingsPage
                                 <td colspan="2"><h3><?php echo esc_html__( 'FILE PROTECTION', 'prevent-direct-access' ) ?></h3></td>
                             </tr>
                             <?php
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-auto-protect-new-file-upload.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-encryption-info.php';
                             include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-file-access-permission.php';
                             include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-no-access-page.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-replace-content-options.php';
+                            ?>
+                            <tr>
+                                <td colspan="2">
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr id="pda-private-download-link">
+                                <td colspan="2"><h3><?php echo esc_html__( 'PRIVATE DOWNLOAD LINKS', 'prevent-direct-access-gold' ) ?></h3></td>
+                            </tr>
+                            <?php
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-private-url-prefix.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-auto-create-private-link.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-force-download.php';
                             ?>
                             <tr>
                                 <td colspan="2">
@@ -213,10 +229,31 @@ class PDA_SettingsPage
                             </tr>
                             <?php
                             include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-prevent-right-click.php';
-                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-ptotect-file.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-hide-wordpress-version.php';
                             include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-prevent-hotlinking.php';
                             include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-disable-directory-listing.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-ptotect-file.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-block-access-info-file.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-allow-web-crawlers.php';
                             ?>
+                            <tr>
+                                <td colspan="2">
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr id="pda-advance-opts">
+                                <td colspan="2"><h3><?php echo esc_html__( 'ADVANCED OPTIONS', 'prevent-direct-access-gold' ) ?></h3></td>
+                            </tr>
+
+    
+                            <?php
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-grant-protection-roles.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-enable-remote-log.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-use-redirect-url.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-handle-big-file.php';
+                            include PDA_LITE_BASE_DIR . '/includes/views/view-prevent-direct-access-lite-remove-license-and-all-data.php';
+                            ?>
+                            
                             <tr>
                                 <td></td>
                                 <td>
@@ -287,10 +324,10 @@ class PDA_SettingsPage
                 <div class="pda-notice-content">
                     <h3><?php _e( 'Do you like Prevent Direct Access? You\'ll love its Gold version!'); ?></h3>
                     <p><?php _e( 'Please upgrade to ' ); ?>
-                        <a target="_blank" href="<?php echo sprintf(constant( 'PDA_HOME_PAGE' ), 'user-website' , "settings-notification-link") ?>" target="_blank"><?php _e( 'Gold version' ); ?></a> to change default settings!</p>
+                        <a target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website' , "settings-notification-link") ?>" target="_blank"><?php _e( 'Gold version' ); ?></a> to change default settings!</p>
                 </div>
                 <div class="pda-install-now">
-                    <a class="button pda-install-button" target="_blank" href="<?php echo sprintf(constant( 'PDA_HOME_PAGE' ), 'settings', 'sidebar-cta') ?>"><i class="dashicons dashicons-download"></i><?php _e( 'Get it now!' ); ?></a>
+                    <a class="button pda-install-button" target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'settings', 'sidebar-cta') ?>"><i class="dashicons dashicons-download"></i><?php _e( 'Get it now!' ); ?></a>
                 </div>
             </div>
         </div>

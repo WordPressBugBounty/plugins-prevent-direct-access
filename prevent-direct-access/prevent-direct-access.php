@@ -2,8 +2,8 @@
 /*
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
-Description: Prevent Direct Access provides a simple solution to prevent Google indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8.3
+Description: Prevent Direct Access provides a simple solution to prevent Google and AI bot indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
+Version: 2.8.8.4
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
@@ -21,10 +21,12 @@ define('PDA', __FILE__);
 define('PDA_HOME_PAGE', 'https://preventdirectaccess.com/?utm_source=user-website&utm_medium=%s&utm_campaign=%s');
 define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&amp;utm_medium=settings&amp;utm_campaign=sidebar-cta');
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
+define('PDA_PRICING_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&utm_medium=%s&utm_campaign=%s');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8.3');
+define('PDAF_VERSION', '2.8.8.4');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
+define('PDA_LITE_PLUGIN_BASE_NAME', plugin_basename( __FILE__ ) );
 
 // Include Required Files
 require 'includes/repository.php';
@@ -109,10 +111,23 @@ class Pda_Admin
 
         add_action('rest_api_init', array( $this, 'pda_rest_api_init_cb' ), 10, 2);
 
+
+        add_filter( 'plugin_action_links_' . PDA_LITE_PLUGIN_BASE_NAME, array( $this, 'handle_plugin_links' ), 30 );
+
         pda_add_defaults_fn();
 
         $grid_view_module = new PDAFree\modules\Grid_View\Loader($this);
         $grid_view_module->register();
+    }
+
+
+    public function handle_plugin_links( $links ) {
+       
+        $setting_url = esc_url( admin_url( 'admin.php?page=wp_pda_options'  ) );
+        $plugin_link = '<a href="' . $setting_url . '">' . __( 'Settings', 'prevent-direct-access' ) . '</a>';
+        array_unshift( $links, $plugin_link );
+
+        return $links;
     }
 
     /**
@@ -212,7 +227,7 @@ class Pda_Admin
     {
         $base = plugin_basename(__FILE__);
         if ($file == $base ) {
-            $links[] = '<a style="color: #cc0000 ; font-weight: bold;" href=' . sprintf(constant('PDA_HOME_PAGE'), 'pluginpage', 'plugin-upgrade-link') . '>' . __('Upgrade to Gold Version', 'prevent-direct-access') . '</a>';
+            $links[] = '<a style="color: #cc0000 ; font-weight: bold;" target="_blank" href=' . sprintf(constant('PDA_PRICING_PAGE'), 'pluginpage', 'plugin-upgrade-link') . '>' . __('Upgrade to Gold Version', 'prevent-direct-access') . '</a>';
         }
 
         return $links;
@@ -1046,7 +1061,7 @@ class Pda_Admin
         $message = sprintf(
             __(': Our PDA Lite only supports WordPress single site. Please <a target="_blank" rel="noopener" href="%s">upgrade to Gold version</a> for our file protection to work properly.', 'password-protect-page'),
             sprintf(
-                constant('PDA_HOME_PAGE'), 'notification', 'notification-link'
+                constant('PDA_PRICING_PAGE'), 'notification', 'notification-link'
             )
         );
         ?>
@@ -1285,4 +1300,28 @@ class Pda_Admin
     }
 }
 $pda_admin = new Pda_Admin();
+
+
+/* Plugin Analytics Data */
+function wpfolio_pda_analytics_load() {
+
+    require_once dirname( __FILE__ ) . '/wpfolio-analytics/wpfolio-analytics.php';
+
+    $wpfolio_analytics =  wpfolio_pda_anylc_init_module( array(
+                            'id'            => 9,
+                            'file'          => plugin_basename( __FILE__ ),
+                            'name'          => 'Prevent Direct Access',
+                            'slug'          => 'wp_pda_options',
+                            'tempslug'      => 'wp_pda_options_optin',
+                            'type'          => 'plugin',
+                            'menu'          => 'wp_pda_options',
+                            'redirect_page' => 'wp_pda_options',
+                            'text_domain'   => 'prevent-direct-access',
+                        ));
+
+    return $wpfolio_analytics;
+}
+
+// Init Analytics
+wpfolio_pda_analytics_load();
 ?>

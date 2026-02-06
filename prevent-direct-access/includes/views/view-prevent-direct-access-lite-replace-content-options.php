@@ -5,7 +5,7 @@
 *
 */
 ?>
-<tr>
+<tr class="pda-gray-out">
 	<td>
 		<label class="pda_switch" for="pda_auto_replace_protected_file">
 			<input type="checkbox" id="pda_auto_replace_protected_file"
@@ -16,11 +16,19 @@
 	<td>
 		<p>
 			<label><?php echo esc_html__( 'Search & Replace', 'prevent-direct-access' ) ?>
+			<span class="pda_upgrade_advice">
+					<a rel="noopener" >
+						<span class="pda_dashicons dashicons dashicons-lock">
+							<span class="pda_upgrade_tooltip"><?php echo esc_html__( 'Upgrade to Gold', 'prevent-direct-access' ) ?></span>
+						</span>
+					</a>
+				</span>	
 			</label>
 			<?php echo esc_html__( 'Search and auto-replace new protected files whose URLs are already embedded in content', 'prevent-direct-access' ) ?>
 			<span>
                 <?php echo esc_html__( PDA_Lite_Constants::WARNING_PLAN, 'prevent-direct-access' ) ?>
             </span>
+
 		</p>
 	</td>
 
