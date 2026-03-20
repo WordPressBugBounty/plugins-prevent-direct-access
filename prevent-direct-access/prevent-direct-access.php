@@ -3,14 +3,14 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google and AI bot indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8.4
+Version: 2.8.8.5
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
 License: GPL
 Text Domain: prevent-direct-access
 Domain Path: /languages
-*/
+*/ 
 
 if (! defined('ABSPATH') ) {
     exit;
@@ -23,10 +23,12 @@ define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_PRICING_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&utm_medium=%s&utm_campaign=%s');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8.4');
+define('PDAF_VERSION', '2.8.8.5');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 define('PDA_LITE_PLUGIN_BASE_NAME', plugin_basename( __FILE__ ) );
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 
 // Include Required Files
 require 'includes/repository.php';
@@ -310,7 +312,7 @@ class Pda_Admin
             if ($is_apache && $is_htaccess_writable !== true && is_plugin_active($plugin) ) {
                 ?>
                 <div class="error is-dismissible notice">
-                    <p><b><?php echo __('Prevent Direct Access: ', 'prevent-direct-access'); ?></b> If your <b>.htaccess</b>
+                    <p><b><?php echo esc_html__('Prevent Direct Access: ', 'prevent-direct-access'); ?></b> If your <b>.htaccess</b>
                         file were writable, we could do this automatically, but it isn’t. So you must either make it
                         writable or manually update your .htaccess with the mod_rewrite rules found under <b>Settings >>
                             Permalinks</b>. Until then, the plugin can't work yet. </p>
@@ -322,7 +324,7 @@ class Pda_Admin
                 // plugin is activated.
                 ?>
                 <div class="error is-dismissible notice">
-                    <p><b><?php echo _e("Prevent Direct Access: ", 'prevent-direct-access'); ?></b> You are using WP
+                    <p><b><?php esc_html_e("Prevent Direct Access: ", 'prevent-direct-access'); ?></b> You are using WP
                         REST API. Please update to WordPress REST API (Version 2)
                         (https://wordpress.org/plugins/rest-api/) </p>
                 </div>
@@ -492,13 +494,13 @@ class Pda_Admin
                     <span id="pda-v3-text_<?php echo esc_attr($post->ID); ?>"
                           class="protection-status <?php echo esc_attr($pda_class); ?>"
                           title="<?php echo esc_attr($title_text); ?>">
-                        <?php echo $pda_icon; ?>
+                        <?php echo wp_kses_post( $pda_icon ); ?>
                         <?php echo esc_html($pda_text); ?>
                     </span>
                 </p>
                 <div>
                     <a class="pda_gold_btn"
-                       id="pda_gold-<?php echo $post->ID ?>"><?php echo esc_html__('Configure file protection', 'prevent-direct-access') ?></a>
+                       id="pda_gold-<?php echo esc_attr( $post->ID ); ?>"><?php echo esc_html__('Configure file protection', 'prevent-direct-access') ?></a>
                 </div>
             </div>
             <?php
@@ -507,7 +509,7 @@ class Pda_Admin
         if ($column_name == 'hits_count' ) {
             $hits_count = ( isset($advance_file) && isset($advance_file->hits_count) ) ? $advance_file->hits_count : 0;
             ?>
-            <label><?php echo $hits_count; ?></label>
+            <label><?php echo esc_html( $hits_count ); ?></label>
             <?php
         }
     }
@@ -532,16 +534,20 @@ class Pda_Admin
     public function so_wp_ajax_function()
     {
         if (! isset($_REQUEST['security_check'], $_POST['id'], $_POST['is_prevented']) ) {
-            wp_die('Invalid data');
+            wp_die(
+                esc_html__( 'Invalid data.', 'prevent-direct-access' )
+            );
         }
 
-        $nonce   = $_REQUEST['security_check'];
+        $nonce = sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) );
         $post_id = absint($_POST['id']);
         if (! wp_verify_nonce($nonce, 'pda_ajax_nonce' . $post_id) ) {
-            wp_die('invalid_nonce');
+            wp_die(
+                esc_html__( 'invalid_nonce.', 'prevent-direct-access' )
+            );
         }
-
-        $is_prevented = wp_validate_boolean($_POST['is_prevented']);
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $is_prevented = wp_validate_boolean(  wp_unslash( $_POST['is_prevented'] ) ) ;
         $file_result  = $this->insert_prevent_direct_access($post_id, $is_prevented);
 
         //move file to _pda
@@ -577,7 +583,9 @@ class Pda_Admin
     public function check_nonce( $nonce, $post_id )
     {
         if (! wp_verify_nonce($nonce, 'pda_ajax_nonce' . $post_id) ) {
-            wp_die('invalid_nonce');
+            wp_die(
+                esc_html__( 'invalid_nonce.', 'prevent-direct-access' )
+            );
         }
     }
 
@@ -587,12 +595,19 @@ class Pda_Admin
     public function so_wp_ajax_regenerate_url()
     {
         if (! isset($_REQUEST['security_check'], $_POST['id']) ) {
-            wp_die('Invalid data');
+            wp_die(
+                esc_html__( 'Invalid data', 'prevent-direct-access' )
+            );
         }
 
-        $nonce   = $_REQUEST['security_check'];
+        $nonce = sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) );
         $post_id = absint($_POST['id']);
-        $this->check_nonce($nonce, $post_id);
+        //$this->check_nonce($nonce, $post_id);
+        if (! wp_verify_nonce($nonce, 'pda_ajax_nonce' . $post_id) ) {
+            wp_die(
+                esc_html__( 'invalid_nonce.', 'prevent-direct-access' )
+            );
+        }
 
         $repository = new PDA_Repository;
         $result  = $repository->update_private_link_by_post_id($post_id);
@@ -650,7 +665,11 @@ class Pda_Admin
             $fileUrl    = path_join($upload_dir['basedir'], $meta_value);
 
             return array(
-            'error' => __("The File: $fileUrl does not exist.", 'prevent-direct-access'),
+                'error' => sprintf(
+                    // translators: %s is the full filesystem path of the missing file.
+                    __( 'The file %s does not exist.', 'prevent-direct-access' ),
+                    $fileUrl
+                ),
             );
         }
         if ($is_prevented && $this->is_file_limitation_over() ) {
@@ -747,7 +766,7 @@ class Pda_Admin
     {
         $check = check_ajax_referer('pda_subscribe', 'security_check');
         if ($check == 1 ) {
-            if ($_POST['action'] == 'pda_subscribe' ) {
+            if ( isset( $_POST['action'] ) && sanitize_text_field( wp_unslash( $_POST['action'] ) ) === 'pda_subscribe' ) {
                 $uid = get_current_user_id();
                 update_user_meta($uid, 'pda_subscribed', true);
             }
@@ -782,9 +801,9 @@ class Pda_Admin
      */
     public function pda_setting_pages()
     {
-        wp_register_style('pda_setting_css', plugin_dir_url(__FILE__) . ( 'css/prevent-direct-access-lite-setting.css' ), array());
+        wp_register_style('pda_setting_css', plugin_dir_url(__FILE__) . ( 'css/prevent-direct-access-lite-setting.css' ), array(), PDAF_VERSION);
         wp_enqueue_style('pda_setting_css');
-        wp_register_style('pda_rating_subscribe_css', plugin_dir_url(__FILE__) . ( 'css/prevent-direct-access-lite-rating-subscribe.css' ), array());
+        wp_register_style('pda_rating_subscribe_css', plugin_dir_url(__FILE__) . ( 'css/prevent-direct-access-lite-rating-subscribe.css' ), array(), PDAF_VERSION);
         wp_enqueue_style('pda_rating_subscribe_css');
     }
 
@@ -793,7 +812,7 @@ class Pda_Admin
      */
     public function pda_setting_go_pro()
     {
-        wp_register_style('pda_setting_go_pro_css', plugin_dir_url(__FILE__) . ( 'css/pda_setting_go_pro.css' ), array());
+        wp_register_style('pda_setting_go_pro_css', plugin_dir_url(__FILE__) . ( 'css/pda_setting_go_pro.css' ), array(), PDAF_VERSION);
         wp_enqueue_style('pda_setting_go_pro_css');
     }
 
@@ -872,6 +891,8 @@ class Pda_Admin
                 array_push($un_protected_files, $post_object[ $i ]);
             }
         }
+        // Filtering results based on URL parameter only (no data processing).
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['protected_media']) ) {
             if ($_GET['protected_media'] == 1 ) {
                 return $protected_files;
@@ -883,6 +904,7 @@ class Pda_Admin
         } else {
             return $post_object;
         }
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
     }
 
     /**
@@ -890,6 +912,7 @@ class Pda_Admin
      */
     public function pda_load_text_domain()
     {
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
         load_plugin_textdomain('prevent-direct-access', false, basename(dirname(__FILE__)) . '/languages/');
     }
 
@@ -923,14 +946,20 @@ class Pda_Admin
     function pda_lite_update_general_settings()
     {
         if (! isset($_REQUEST['settings'], $_REQUEST['security_check']) ) {
-            wp_die('Invalid data');
+            wp_die(
+                esc_html__( 'Invalid data', 'prevent-direct-access' )
+            );
         }
 
-        $nonce = $_REQUEST['security_check'];
+        $nonce = sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) );
         if (! wp_verify_nonce($nonce, 'pda_ajax_nonce_v3') ) {
-            wp_die('invalid_nonce');
+            wp_die(
+                esc_html__( 'invalid_nonce', 'prevent-direct-access' )
+            );
         }
-        $settings = $_REQUEST['settings'];
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+        $settings = isset( $_REQUEST['settings'] ) && is_array( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : array();
         $settings = array_map('sanitize_text_field', $settings);
 
         update_option(
@@ -943,7 +972,7 @@ class Pda_Admin
             'file_access_permission'           => array_key_exists('file_access_permission', $settings) ? $settings['file_access_permission'] : '',
             ) 
         );
-
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         /**
          * Add filter to write htaccess rules
          */
@@ -959,12 +988,12 @@ class Pda_Admin
      */
     public function pda_lite_update_ip_restriction_settings()
     {
-        $nonce = isset($_REQUEST['security_check']) ? $_REQUEST['security_check'] : false;
+        $nonce = isset($_REQUEST['security_check']) ? sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) ) : false;
         if (! $nonce || ! wp_verify_nonce($nonce, 'pda_ajax_nonce_v3') ) {
             return wp_send_json_error(
                 array(
                 'success' => false,
-                'message' => 'Invalid nonce',
+                'message' => __( 'Invalid nonce', 'prevent-direct-access' ),
                 ),
                 400
             );
@@ -973,12 +1002,13 @@ class Pda_Admin
             return wp_send_json_error(
                 array(
                 'success' => false,
-                'message' => 'IP does not exist',
+                'message' => __( 'IP does not exist', 'prevent-direct-access' ),
                 ),
                 400
             );
         }
-        $settings = $_POST['settings'];
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $settings = isset( $_POST['settings'] ) && is_array( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array();
         $settings = array_map('sanitize_text_field', $settings);
 
         update_option('FREE_PDA_SETTINGS_IP', array( 'ip_lock' => $settings['pda_free_pl_blacklist_ips'] ));
@@ -1005,10 +1035,10 @@ class Pda_Admin
             );
         }
         $check = check_ajax_referer('pda_free_subscribe', 'security_check');
-        if ($check == 1 ) {
-            if ($_POST['action'] == 'pda_free_subscribe' ) {
+        if ( $check == 1 ) {
+            if ( isset( $_POST['action'] ) && sanitize_text_field( wp_unslash( $_POST['action'] ) ) === 'pda_free_subscribe' ) {
                 $data     = array(
-                'email'  => sanitize_email($_POST['email']),
+                'email'  => sanitize_email( wp_unslash( $_POST['email'] ) ),
                 'plugin' => 'pda',
                 );
                 $args     = array(
@@ -1046,7 +1076,7 @@ class Pda_Admin
     public function multisite_admin_notices()
     {
         global $pagenow;
-
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended
         if ($pagenow !== 'plugins.php'
             && $pagenow !== 'upload.php'
             && (!isset($_GET['page'])
@@ -1054,12 +1084,12 @@ class Pda_Admin
         ) {
             return;
         }
-
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
         $plugin_name = 'Prevent Direct Access';
 
-        /* translators: %1$s The guide link */
         $message = sprintf(
-            __(': Our PDA Lite only supports WordPress single site. Please <a target="_blank" rel="noopener" href="%s">upgrade to Gold version</a> for our file protection to work properly.', 'password-protect-page'),
+            // translators: %1$s is the URL to the pricing page used in the upgrade link.
+            __(': Our PDA Lite only supports WordPress single site. Please <a target="_blank" rel="noopener" href="%1$s">upgrade to Gold version</a> for our file protection to work properly.', 'prevent-direct-access'),
             sprintf(
                 constant('PDA_PRICING_PAGE'), 'notification', 'notification-link'
             )
@@ -1098,24 +1128,23 @@ class Pda_Admin
             <noscript>
                 <div style="position: fixed; top: 0px; left: 0px; z-index: 30000000;
                 height: 100%; width: 100%; background-color: #FFFFFF">
-                    <p style="margin-left: 10px"><?php esc_html_e($noscript_message, 'prevent-direct-access'); ?></p>
+                    <p style="margin-left: 10px"><?php echo esc_html( $noscript_message ); ?></p>
                 </div>
             </noscript>
 
             <script>
 
-              const show_alert = "<?php echo $show_alert; ?>";
-              const pda_disable_tool_tipe = "<?php echo $pda_disable_tool_tipe; ?>";
-              const disable_developer_tools_message = "<?php echo $disable_developer_tools_message; ?>";
-              var is_mobile = "<?php echo $is_mobile; ?>";
+              const show_alert = <?php echo esc_js( wp_json_encode( $show_alert ) ); ?>;
+              const pda_disable_tool_tipe = <?php echo esc_js( wp_json_encode( $pda_disable_tool_tipe ) ); ?>;
+              const disable_developer_tools_message = <?php echo esc_js( wp_json_encode( $disable_developer_tools_message ) ); ?>;
+              var is_mobile = <?php echo esc_js( wp_json_encode( $is_mobile ) ); ?>;
                
                 
                 document.addEventListener('contextmenu', function (event) {
                    
                     if ( show_alert ) {
-
+                        
                         event.preventDefault(); 
-
                         if( pda_disable_tool_tipe ){
 
                             const existingMessage = document.querySelector('.custom-context-message');
@@ -1125,7 +1154,7 @@ class Pda_Admin
                             
                             const message = document.createElement('div');
                             message.className = 'custom-context-message';
-                            message.textContent = '<?php esc_attr_e($disable_right_click_message, 'prevent-direct-access'); ?>';
+                            message.textContent = '<?php echo esc_attr( $disable_right_click_message ); ?>';
                             
                             // Style the message
                             Object.assign(message.style, {
@@ -1189,7 +1218,7 @@ class Pda_Admin
 
                                 if ( !is_mobile ) { // Check the is mobile device or not. 
 
-                                    alert('<?php echo $developer_tools_message; ?>');
+                                    alert('<?php echo esc_js($developer_tools_message); ?>');
                                     window.location.reload(); // Optionally, reload the page if DevTools is detected
                                 } 
                                 
@@ -1324,4 +1353,7 @@ function wpfolio_pda_analytics_load() {
 
 // Init Analytics
 wpfolio_pda_analytics_load();
+
+require_once __DIR__ . '/includes/admin/class-pda-deactivation-feedback.php';
+
 ?>

@@ -195,7 +195,7 @@ class Pda_Helper {
 			return 'apache';
 		}
 
-		$server_info = isset( $_SERVER['SERVER_SOFTWARE'] ) ? wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) : '';
+		$server_info = isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
 
 		$servers = [
 			'nginx',

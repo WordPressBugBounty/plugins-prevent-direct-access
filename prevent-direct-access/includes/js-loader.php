@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
  *
  * Enqueue js and css resources
@@ -40,7 +43,8 @@ class Pda_JS_Loader {
     public function admin_load_js() {
 
     	// Register JS
-        wp_register_script( 'ajaxHandle', plugins_url( '../js/custom-file.js', __FILE__ ), array( 'jquery' ) );
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingInFooter -- Intentionally loaded in header.
+        wp_register_script( 'ajaxHandle', plugins_url( '../js/custom-file.js', __FILE__ ), array( 'jquery' ), PDAF_VERSION );
 		wp_enqueue_script( 'ajaxHandle' );
 		wp_localize_script( 'ajaxHandle', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ), 'pda_sub_nonce' =>  wp_create_nonce('pda_subscribe') ) );
 		if ( function_exists( 'get_current_screen' ) ) {

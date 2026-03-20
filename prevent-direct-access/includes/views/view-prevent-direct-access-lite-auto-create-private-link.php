@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * Auto Create Private Link
@@ -25,7 +28,7 @@
 				</span>	
 			</label>
 			<?php echo esc_html__( 'Automatically create a new private link once the file is protected', 'prevent-direct-access' ) ?><span>
-                <?php echo esc_html__( PDA_Lite_Constants::WARNING_PLAN, 'prevent-direct-access' ) ?>
+                <?php echo esc_html( PDA_Lite_Constants::WARNING_PLAN ); ?>
             </span>
 		</p>
 	</td>

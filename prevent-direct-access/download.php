@@ -9,14 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
+
+
 // Call Required Files
 require_once 'includes/repository.php';
 require_once 'includes/helper.php';
 
 ignore_user_abort( true );
-set_time_limit( 0 ); // disable the time limit for this script
-
-$is_direct_access = isset( $_GET['is_direct_access'] ) ? sanitize_text_field( $_GET['is_direct_access'] ) : '';
+// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit
+if ( function_exists( 'set_time_limit' ) ) {
+	// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit, WordPress.PHP.NoSilencedErrors.Discouraged
+	@set_time_limit( 0 );
+	// phpcs:enable WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit, WordPress.PHP.NoSilencedErrors.Discouraged
+}// disable the time limit for this script
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$is_direct_access = isset( $_GET['is_direct_access'] ) ? sanitize_text_field( wp_unslash( $_GET['is_direct_access'] ) ) : '';
 if ( $is_direct_access === 'true' ) {
 	/**
 	 * Quick fix for FAP
@@ -27,6 +36,9 @@ if ( $is_direct_access === 'true' ) {
 } else {
 	show_file_from_private_link();
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
 
 /**
  * Check if option existed
@@ -41,13 +53,13 @@ function check_stop_image_hotlinking() {
 	$pda_option = get_option( 'FREE_PDA_SETTINGS' );
 	if ( is_array( $pda_option ) && array_key_exists( 'enable_image_hot_linking', $pda_option ) && $pda_option['enable_image_hot_linking'] === "on" ) {
 
-		$file_type = sanitize_text_field( $_GET['file_type'] );
+		$file_type = sanitize_text_field( wp_unslash( $_GET['file_type'] ) );
 		$images    = [ 'jpg', 'png', 'PNG', 'gif' ];
 
 		if ( in_array( $file_type, $images ) ) {
-			if ( ( isset( $_SERVER['HTTP_REFERER'] ) && ! empty( $_SERVER['HTTP_REFERER'] ) ) ) {
-				$referer_host = parse_url( $_SERVER['HTTP_REFERER'] )['host']; //localhost
-				$my_domain    = $_SERVER['HTTP_HOST']; //staging.ymese.com
+			if ( ( isset( $_SERVER['HTTP_REFERER'] ) && ! empty( sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) ) ) ) {
+				$referer_host = ! empty( $_SERVER['HTTP_REFERER'] ) ? wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) ), PHP_URL_HOST ) : '';
+				$my_domain = ! empty( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
 				if ( $referer_host !== $my_domain ) {
 					file_not_found();
 				}
@@ -80,8 +92,8 @@ function check_file_is_prevented() {
 	if ( ! isset( $_GET[ $endpoint ], $_GET['file_type'] ) ) {
 		file_not_found();
 	}
-	$file_name = sanitize_text_field( $_GET[ $endpoint ] );
-	$file_type = sanitize_text_field( $_GET['file_type'] );
+	$file_name = sanitize_text_field( wp_unslash( $_GET[ $endpoint ] ) );
+	$file_type = sanitize_text_field( wp_unslash( $_GET['file_type'] ) );
 
 	$original_file = "$file_name.$file_type";
 
@@ -143,7 +155,9 @@ function pda_free_attachment_image_url_to_post( $baseurl, $filepath ) {
 			$url_has_size
 		);
 
+		// phpcs:disable WordPress.DB
 		$post = $wpdb->get_row( $sql );
+       // phpcs:enable WordPress.DB
 
 		return $post;
 	}
@@ -175,7 +189,9 @@ function pda_free_attachment_image_url_to_post( $baseurl, $filepath ) {
 		);
 	}
 
+	// phpcs:disable WordPress.DB
 	$posts = $wpdb->get_results( $sql );
+	// phpcs:enable WordPress.DB
 
 	if ( count( $posts ) === 1 ) {
 		return $posts[0];
@@ -246,6 +262,7 @@ function pda_free_get_scaled_url( $url, $optimize_name = '-scaled' ) {
 function pda_free_might_get_post_id_from_backup_sizes( $url_no_size, $url_no_size_scaled ) {
 	$file        = wp_basename( $url_no_size );
 	$scaled_file = wp_basename( $url_no_size_scaled );
+	// phpcs:disable WordPress.DB
 	$query_args  = array(
 		'post_type'   => 'attachment',
 		'post_status' => 'inherit',
@@ -265,6 +282,7 @@ function pda_free_might_get_post_id_from_backup_sizes( $url_no_size, $url_no_siz
 		),
 	);
 	$query       = new WP_Query( $query_args );
+	// phpcs:enable WordPress.DB
 	if ( $query->have_posts() ) {
 		foreach ( $query->posts as $post_id ) {
 			// Need to query the backup sizes and double check with the input file.
@@ -292,8 +310,8 @@ function massage_file_url( $url ) {
 	$dir  = wp_get_upload_dir();
 	$path = $url;
 
-	$site_url   = parse_url( $dir['url'] );
-	$image_path = parse_url( $path );
+	$site_url   = wp_parse_url( $dir['url'] );
+	$image_path = wp_parse_url( $path );
 
 	//force the protocols to match if needed
 	if ( isset( $image_path['scheme'] ) && ( $image_path['scheme'] !== $site_url['scheme'] ) ) {
@@ -361,7 +379,9 @@ function is_expired( $advance_file ) {
 	if ( ! isset( $advance_file->expired_date ) ) {
 		return false;
 	}
+	// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	$expired_date = date( 'm/d/Y', $advance_file->expired_date );
+	// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	$today        = date( 'm/d/Y' );
 
 	return $today >= $expired_date;
@@ -374,7 +394,7 @@ function show_file_from_private_link() {
 	$configs  = Pda_Helper::get_plugin_configs();
 	$endpoint = $configs['endpoint'];
 	if ( isset( $_GET[ $endpoint ] ) ) {
-		$private_url  = sanitize_text_field( $_GET[ $endpoint ] );
+		$private_url  = sanitize_text_field( wp_unslash( $_GET[ $endpoint ] ) );
 		$repository   = new PDA_Repository;
 		$advance_file = $repository->get_advance_file_by_url( $private_url );
 		if ( isset( $advance_file ) &&
@@ -388,7 +408,10 @@ function show_file_from_private_link() {
 				$new_hits_count = isset( $advance_file->hits_count ) ? $advance_file->hits_count + 1 : 1;
 				$repository->update_advance_file_by_id( $advance_file->ID, array( 'hits_count' => $new_hits_count ) );
 			} else {
-				echo '<h2>Sorry! Invalid post!</h2>';
+				printf(
+					'<h2>%s</h2>',
+					esc_html__( 'Sorry! Invalid post!', 'prevent-direct-access' )
+				);
 			}
 			if ( isset( $post ) ) {
 				download_file( $post );
@@ -489,7 +512,8 @@ function send_file_to_client( $file ) {
 
 	//set header
 	header( 'Content-Type: ' . $mimetype ); // always send this
-	if ( false === strpos( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ) {
+	$server_software = ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
+	if ( false === strpos( $server_software, 'Microsoft-IIS' ) ) {
 		header( 'Content-Length: ' . filesize( $file ) );
 	}
 
@@ -501,11 +525,11 @@ function send_file_to_client( $file ) {
 	header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 100000000 ) . ' GMT' );
 	header( 'X-Robots-Tag: none' );
 	// Support for Conditional GET
-	$client_etag = isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) ? stripslashes( $_SERVER['HTTP_IF_NONE_MATCH'] ) : false;
+	$client_etag = isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) ) : false;
 	if ( ! isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) {
 		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = false;
 	}
-	$client_last_modified = trim( $_SERVER['HTTP_IF_MODIFIED_SINCE'] );
+	$client_last_modified = trim( sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) );
 	// If string is empty, return 0. If not, attempt to parse into a timestamp
 	$client_modified_timestamp = $client_last_modified ? strtotime( $client_last_modified ) : 0;
 	// Make a timestamp for our most recent modification...
@@ -520,7 +544,9 @@ function send_file_to_client( $file ) {
 	}
 
 	status_header( 200 );
-	readfile( $file );
+	// phpcs:disable WordPress.WP.AlternativeFunctions
+    readfile( $file );
+    // phpcs:enable WordPress.WP.AlternativeFunctions
 }
 
 /**

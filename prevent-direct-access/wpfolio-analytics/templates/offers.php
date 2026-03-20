@@ -5,7 +5,7 @@
  * @package WPFolio Pda Analytic
  * @since 1.0.0
  */
-
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -50,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php } ?>
 
 			<?php if( ! empty( $offer_data['desc'] ) ) { ?>
-			<div class="wpfolio-pda-anylc-offer-desc wpfolio-pda-anylc-center"><?php echo wpautop( $offer_data['desc'] ); ?></div>
+			<div class="wpfolio-pda-anylc-offer-desc wpfolio-pda-anylc-center"><?php echo wp_kses_post( wpautop( $offer_data['desc'] ) ); ?></div>
 			<?php } ?>
 
 			<?php if( ! empty( $offer_data['button'] ) ) { ?>
@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	?>
 		Please Wait... Redirecting to plugin screen. <a href="<?php echo esc_url( $redirect_url ); ?>">Click Here</a> in case you are not auto redirect.
 		<script type="text/javascript">
-			window.location = "<?php echo esc_url( $redirect_url ); ?>";
+			window.location = "<?php echo esc_js( esc_url_raw( $redirect_url ) ); ?>";
 		</script>
 	<?php } ?>
 

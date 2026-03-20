@@ -5,7 +5,7 @@
  * @package WPFolio Pda Analytic
  * @since 1.0
  */
-
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 if ( !defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -25,10 +25,10 @@ $optin_form_data['state'] = $state;
 				<p class="wpfolio-pda-anylc-popup-heading"><?php echo esc_html__( 'We appreciate your help to make the plugin better by letting us track some usage data.', 'prevent-direct-access' );?></p>
 				<p><?php echo esc_html__( 'Usage tracking is done in the name of making','prevent-direct-access' );?> <b><?php echo esc_html( $module['name'] ); ?></b> <?php echo esc_html__( 'better', 'prevent-direct-access' );?>. <?php echo esc_html__('Making a better user experience, prioritizing new features, and more good things. We’d really appreciate it if you could reconsider letting us continue with the tracking.', 'prevent-direct-access');?>
 			    </p>
-				<p><?php echo esc_html__('By clicking "Opt Out", we will stop sending any data from WordPress.','prevent-direct-access');?> <b><?php echo esc_html( $module['name'] ); ?></b> to <a href="<?php echo WPFOLIO_PDA_ACTION_URL;?>" target="_blank"><?php echo WPFOLIO_PDA_ACTION_URL;?></a>.</p>
+				<p><?php echo esc_html__('By clicking "Opt Out", we will stop sending any data from WordPress.','prevent-direct-access');?> <b><?php echo esc_html( $module['name'] ); ?></b> to <a href="<?php echo esc_url( WPFOLIO_PDA_ACTION_URL );?>" target="_blank"><?php echo esc_html( WPFOLIO_PDA_ACTION_URL );?></a>.</p>
 			</div>
 			<div class="wpfolio-pda-anylc-popup-footer">
-				<form method="POST" action="<?php echo WPFOLIO_PDA_ACTION_URL;?>">
+				<form method="POST" action="<?php echo esc_url( WPFOLIO_PDA_ACTION_URL );?>">
 					<?php
 					if( ! empty( $optin_form_data ) ) {
 						foreach ($optin_form_data as $data_key => $data_value) {

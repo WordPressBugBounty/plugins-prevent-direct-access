@@ -5,11 +5,13 @@
  *
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 if ( ! defined( 'ABSPATH' ) ) exit;
 function admin_load_js() {
 
 	// Register Script
-	wp_register_script( 'ajaxHandle', plugins_url( '../js/custom-file.js', __FILE__ ), array( 'jquery' ) );
+	// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingInFooter -- Intentionally loaded in header.
+	wp_register_script( 'ajaxHandle', plugins_url( '../js/custom-file.js', __FILE__ ), array( 'jquery' ), PDAF_VERSION );
 	
 	// Enqueue Script
 	wp_enqueue_script( 'ajaxHandle' );

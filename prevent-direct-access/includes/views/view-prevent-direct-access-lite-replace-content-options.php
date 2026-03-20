@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * Replace content options
@@ -26,7 +29,7 @@
 			</label>
 			<?php echo esc_html__( 'Search and auto-replace new protected files whose URLs are already embedded in content', 'prevent-direct-access' ) ?>
 			<span>
-                <?php echo esc_html__( PDA_Lite_Constants::WARNING_PLAN, 'prevent-direct-access' ) ?>
+                <?php echo esc_html__( '. Available in Gold version.', 'prevent-direct-access' ) ?>
             </span>
 
 		</p>

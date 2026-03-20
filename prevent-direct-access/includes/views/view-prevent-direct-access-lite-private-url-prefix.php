@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * Private URL Prefix
@@ -22,7 +25,7 @@
 		</p>
 		<div class="pda_error" id="pda_l_error"></div>
 		<p class="description">
-			<?php echo esc_html__( 'Your Private URL will be: ', 'prevent-direct-access' ) ?><?php echo get_site_url() . '/' ?><span id="pda_prefix"><?php echo esc_html__( 'private', 'prevent-direct-access' ) ?></span>/<?php _e( 'your-custom-filename', 'prevent-direct-access' ) ?>
+			<?php echo esc_html__( 'Your Private URL will be: ', 'prevent-direct-access' ) ?><?php echo esc_url( get_site_url() ) . '/' ?><span id="pda_prefix"><?php echo esc_html__( 'private', 'prevent-direct-access' ) ?></span>/<?php esc_html_e( 'your-custom-filename', 'prevent-direct-access' ) ?>
 		</p>
 		<input type="text" id="pda_prefix_url" name="pda_prefix_url" value="private" disabled="disabled"/>
 	</td>

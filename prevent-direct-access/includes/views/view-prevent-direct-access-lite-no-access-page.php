@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * No Access Page
@@ -14,7 +17,7 @@
         </p>
         <div class='no-access-selected-page'>
             <b class="no-access-selected-page-label"><?php echo esc_html__( 'Selected page: ', 'prevent-direct-access' ) ?></b>
-            <span class="no-access-selected-page-title"><?php echo esc_html__( $title['title'], 'prevent-direct-access' ) ?></span>
+            <span class="no-access-selected-page-title"><?php echo esc_html( $title['title'] ) ?></span>
             <span class="dashicons dashicons-no remove-no-access-page"></span>
         </div>
         <?php } else { ?>
@@ -30,8 +33,8 @@
         <div class="no-access-search-container">
             <ul id="pda_search_result"></ul>
             <div class="title_page_404">
-                <input id="title_page_404_input" type="hidden" value="<?php echo $title_page; ?>">
-                <input id="search_page_404_input" type="hidden" name="search_result_page_404" value="<?php _e($data_page); ?>"/>
+                <input id="title_page_404_input" type="hidden" value="<?php echo esc_attr( $title_page ); ?>">
+                <input id="search_page_404_input" type="hidden" name="search_result_page_404" value="<?php echo esc_html( $data_page ); ?>"/>
             </div>
         </div>
     </td>

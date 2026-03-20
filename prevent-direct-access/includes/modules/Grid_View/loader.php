@@ -1,7 +1,9 @@
 <?php
 
 namespace PDAFree\modules\Grid_View;
-
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 class Loader {
 	private $service;
 

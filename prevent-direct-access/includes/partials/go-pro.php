@@ -1,5 +1,7 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * Go gold container.
@@ -58,7 +60,7 @@
                 </div>
                 <div class="gopro-intro-pda">
                     <div class="col review-box pda">
-                        <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/default-placeholder-pda.png'?>" width="100%">
+                        <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/default-placeholder-pda.png' ); ?>" width="100%">
 
                         <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
@@ -103,7 +105,7 @@
                 <div class="review-row">
 
                     <div class="col review-box">
-                        <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/gordonium.jpeg'?>" width="100%">
+                        <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/gordonium.jpeg' ); ?>" width="100%">
                         <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -121,7 +123,7 @@
                     </div>
 
                     <div class="col review-box">
-                        <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/default1.png'?>" width="100%">
+                        <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/default1.png' ); ?>" width="100%">
                         <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -139,7 +141,7 @@
                     </div>
 
                     <div class="col review-box">
-                        <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/158b2161f5bc458ad9cd528b5cfcfed0.png'?>" width="100%">
+                        <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/158b2161f5bc458ad9cd528b5cfcfed0.png' ); ?>" width="100%">
                         <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -163,7 +165,7 @@
             <div class="review-row">
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/default.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/default.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -182,7 +184,7 @@
                 </div>
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/sh-tm-128.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/sh-tm-128.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -200,7 +202,7 @@
                 </div>
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/default2.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/default2.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -225,7 +227,7 @@
             <div class="review-row">
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/default3.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/default3.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -243,7 +245,7 @@
                 </div>
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/deborah-128.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/deborah-128.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>
@@ -261,7 +263,7 @@
                 </div>
 
                 <div class="col review-box">
-                    <img src="<?php echo PDA_LITE_BASE_URL . 'public/assets/avatar/ib-tsm.png'?>" width="100%">
+                    <img src="<?php echo esc_url( PDA_LITE_BASE_URL . 'public/assets/avatar/ib-tsm.png' ); ?>" width="100%">
                     <div class="five-stars">
                             <span class="dashicons dashicons-star-filled"></span>
                             <span class="dashicons dashicons-star-filled"></span>

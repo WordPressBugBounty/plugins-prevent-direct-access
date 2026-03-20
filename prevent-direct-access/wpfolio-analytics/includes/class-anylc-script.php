@@ -28,25 +28,27 @@ class WPFolio_Pda_Anylc_Script {
 	 */
     function wpfolio_pda_anylc_admin_script_style( $hook ) {
 
-		// Process Promotion Data
-		if( !empty($_GET['message']) && $_GET['message'] == 'wpfolio_pda_anylc_promotion' && !empty($_GET['wpfolio_pda_anylc_pdt']) && !empty($_GET['wpfolio_pda_anylc_promo_pdt']) ) {
+		// Process Promotion Data (redirect params from server-side redirect; used only for localize_script).
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only use for script data.
+		if ( ! empty( $_GET['message'] ) && 'wpfolio_pda_anylc_promotion' === $_GET['message'] && ! empty( $_GET['wpfolio_pda_anylc_pdt'] ) && ! empty( $_GET['wpfolio_pda_anylc_promo_pdt'] ) ) {
 			global $wpfolio_pda_analytics_product;
 
-			$promotion 				= 1;
-			$wpfolio_pda_anylc_promo_pdt	= sanitize_text_field( $_GET['wpfolio_pda_anylc_promo_pdt'] );
-			$promotion_pdt 			= explode( ',', $wpfolio_pda_anylc_promo_pdt );
+			$promotion                      = 1;
+			$wpfolio_pda_anylc_promo_pdt   = sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_promo_pdt'] ) );
+			$promotion_pdt                  = explode( ',', $wpfolio_pda_anylc_promo_pdt );
 
-			$anylc_pdt 		= sanitize_text_field( $_GET['wpfolio_pda_anylc_pdt'] );
+			$anylc_pdt = sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_pdt'] ) );
 			$anylc_pdt_data = isset( $wpfolio_pda_analytics_product[ $anylc_pdt ] ) ? $wpfolio_pda_analytics_product[ $anylc_pdt ] : false;
 
-			if( !empty($promotion_pdt) ) {
-				foreach ($promotion_pdt as $pdt_key => $pdt) {
-					if( isset( $anylc_pdt_data['promotion'][$pdt]['file'] ) ) {
-						$promotion_pdt_data[] = $anylc_pdt_data['promotion'][$pdt]['file'];
+			if ( ! empty( $promotion_pdt ) ) {
+				foreach ( $promotion_pdt as $pdt_key => $pdt ) {
+					if ( isset( $anylc_pdt_data['promotion'][ $pdt ]['file'] ) ) {
+						$promotion_pdt_data[] = $anylc_pdt_data['promotion'][ $pdt ]['file'];
 					}
 				}
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
     	// Registring admin Style
 		wp_register_style( 'wpfolio-pda-anylc-admin-style', WPFOLIO_PDA_ANYLC_URL.'assets/css/wpfolio-pda-anylc-admin.css', null, WPFOLIO_PDA_ANYLC_VERSION );

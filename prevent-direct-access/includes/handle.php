@@ -5,6 +5,11 @@
 *
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+// phpcs:disable WordPress.WP.AlternativeFunctions
 // Check if class exists or not
 if(!class_exists("Pda_Free_Handle")) {
     // Class PDA Free Handle
@@ -104,6 +109,7 @@ if(!class_exists("Pda_Free_Handle")) {
             // Check attachment
             if( 'attachment' !== get_post_type( $attachment_id ) ) {
                 return new WP_Error( 'not_attachment', sprintf(
+                    // translators: %d is the ID of the post being checked.
                     __( 'The post with ID: %d is not an attachment post type.', 'prevent-direct-access' ),
                     $attachment_id
                 ), array( 'status' => 404) );
@@ -112,6 +118,7 @@ if(!class_exists("Pda_Free_Handle")) {
             // Check Absolute Path
             if( path_is_absolute( $protected_dir ) ) {
                 return new WP_Error( 'protected_dir_not_relative', sprintf(
+                    // translators: %s is the path provided by the caller.
                     __( 'The new path provided: %s is absolute. The new path must be a path relative to the WP uploads directory.', 'prevent-direct-access' ),
                     $protected_dir
                 ), array( 'status' => 404));
@@ -142,6 +149,7 @@ if(!class_exists("Pda_Free_Handle")) {
             // Create Full path of directory
             if ( !wp_mkdir_p( $protected_full_path ) ) {
                 return new WP_Error( 'wp_mkdir_p_error', sprintf(
+                    // translators: %s is the filesystem path of the directory which failed to be created or verified.
                     __( 'There was an error making or verifying the directory at: %s', 'prevent-direct-access' ),
                     $protected_full_path
                 ), array( 'status' => 500) );
@@ -308,7 +316,8 @@ if(!class_exists("Pda_Free_Handle")) {
                         return new WP_Error(
                             'rename_failed',
                             sprintf(
-                                __( 'Rename failed when trying to move file from: %s, to: %s', 'prevent-direct-access' ),
+                                // translators: %1$s is the source path, %2$s is the destination path. Keep placeholders numbered so translators can reorder if necessary.
+                                __( 'Rename failed when trying to move file from: %1$s, to: %2$s', 'prevent-direct-access' ),
                                 $old_fullpath,
                                 $new_fullpath
                             )

@@ -1,16 +1,32 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 /**
  *
  * PDA Menu and settings
  *
  */
-
+ // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 /**
  * Create Setting Menu
  */
+
 function pda_menu() {
-    add_menu_page('Prevent Direct Access Plugin Settings', 'Prevent Direct Access', 'administrator', __FILE__, 'pda_settings' , 'dashicons-unlock' );
+    // phpcs:disable
+    add_menu_page(
+        __( 'Prevent Direct Access Plugin Settings', 'prevent-direct-access' ),
+        __( 'Prevent Direct Access', 'prevent-direct-access' ),
+        'manage_options',
+        // phpcs:ignore
+         __FILE__,
+        'pda_settings',
+        'dashicons-unlock'
+    );
+    // phpcs:enable
 }
+
 
 /**
  * Manage PDA Setting
@@ -19,7 +35,7 @@ function pda_settings() {
 
     // Check current user role and access
     if(!current_user_can('manage_options')) {
-        wp_die( __('You do not have sufficient permissions to access this page.', 'prevent-direct-access') );
+        wp_die( esc_html__('You do not have sufficient permissions to access this page.', 'prevent-direct-access') );
     }
     ?>
 
@@ -106,15 +122,15 @@ function pda_settings() {
         <div class="notice updated is-dismissible pda-notice pda-install-elementor">
             <div class="pda-notice-inner">
                 <div class="pda-notice-icon">
-                    <img width="64" height="64" src="https://ps.w.org/prevent-direct-access/assets/icon-128x128.jpg?rev=1300338" alt="PDA Logo" />
+                    <img width="64" height="64" src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'public/assets/icon-128x128.jpg' ); ?>" alt="<?php esc_attr_e( 'PDA Logo', 'prevent-direct-access' ); ?>" />
                 </div>
                 <div class="pda-notice-content">
-                    <h3><?php _e( 'Do you like Prevent Direct Access? You\'ll love its Gold version!'); ?></h3>
-                    <p><?php _e( 'Please upgrade to ' ); ?>
-                        <a target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website' , "settings-notification-link") ?>" target="_blank"><?php _e( 'Gold version' ); ?></a> to change default settings!</p>
+                    <h3><?php esc_html_e( 'Do you like Prevent Direct Access? You\'ll love its Gold version!','prevent-direct-access'); ?></h3>
+                    <p><?php esc_html_e( 'Please upgrade to ','prevent-direct-access' ); ?>
+                        <a target="_blank" href="<?php echo esc_url( sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website' , "settings-notification-link") ); ?>" target="_blank"><?php esc_html_e( 'Gold version','prevent-direct-access' ); ?></a> to change default settings!</p>
                 </div>
                 <div class="pda-install-now">
-                    <a class="button pda-install-button" target="_blank" href="<?php echo sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website', 'settings-notification-cta') ?>"><i class="dashicons dashicons-download"></i><?php _e( 'Get it now!' ); ?></a>
+                    <a class="button pda-install-button" target="_blank" href="<?php echo esc_url( sprintf(constant( 'PDA_PRICING_PAGE' ), 'user-website', 'settings-notification-cta') ); ?>"><i class="dashicons dashicons-download"></i><?php esc_html_e( 'Get it now!','prevent-direct-access' ); ?></a>
                 </div>
             </div>
         </div>
@@ -124,7 +140,7 @@ function pda_settings() {
             do_settings_sections( 'pda-settings' );
             ?>
             <p class="submit">
-                <input disabled type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                <input disabled type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes','prevent-direct-access') ?>" />
             </p>
         </form>
     </div>

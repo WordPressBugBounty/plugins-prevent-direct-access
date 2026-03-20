@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * Force to download file
@@ -26,7 +29,7 @@
 			</label>
 			<?php echo esc_html__( 'Force downloads instead of redirecting to protected files when clicking Private Links', 'prevent-direct-access' ) ?>
 			<span>
-                <?php echo esc_html__( PDA_Lite_Constants::WARNING_PLAN, 'prevent-direct-access' ) ?>
+                <?php echo esc_html( PDA_Lite_Constants::WARNING_PLAN ); ?>
             </span>
 		</p>
 	</td>

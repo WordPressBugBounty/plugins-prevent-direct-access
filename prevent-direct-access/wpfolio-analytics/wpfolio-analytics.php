@@ -57,7 +57,7 @@ final class WPFolio_Pda_Analytics {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'pwpc' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'prevent-direct-access' ), '1.0' );
 	}
 
 	/**
@@ -69,7 +69,7 @@ final class WPFolio_Pda_Analytics {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'pwpc' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'prevent-direct-access' ), '1.0' );
 	}
 
 	/**
@@ -90,7 +90,9 @@ final class WPFolio_Pda_Analytics {
 	 */
 	public function define( $name, $value ) {
 		if ( ! defined( $name ) ) {
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 			define( $name, $value );
+			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals
 		}
 	}
 

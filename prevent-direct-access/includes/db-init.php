@@ -26,6 +26,7 @@ class Pda_Database {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . 'prevent_direct_access';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name from $wpdb->prefix; identifier cannot be prepared.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
 			//table is not created. you may create the table here.
 			$charset_collate = $wpdb->get_charset_collate();
@@ -88,6 +89,7 @@ class Pda_Database {
 	function uninstall() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'prevent_direct_access_free';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name from $wpdb->prefix; identifier cannot be prepared.
 		$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 		$this->remove_db_options();
 	}
@@ -98,7 +100,8 @@ class Pda_Database {
 	static function uninstall_static() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'prevent_direct_access_free';
-		$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name from $wpdb->prefix; identifier cannot be prepared.
+		$wpdb->query( "DROP TABLE IF EXISTS `{$table_name}`" );
 		delete_option( 'pda_jal_db_version_free' );
 
 	}
@@ -117,7 +120,9 @@ class Pda_Database {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'prevent_direct_access_free';
-        if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+        $query      = $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- $query is prepared above.
+        if ( $wpdb->get_var( $query ) !== $table_name ) {
             //table is not created. you may create the table here.
             $charset_collate = $wpdb->get_charset_collate();
 

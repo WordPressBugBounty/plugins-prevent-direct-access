@@ -2,6 +2,9 @@
 
 namespace PDAFree\modules\Grid_View;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 class Service {
 	private $repository;
 	private $handler;
@@ -86,11 +89,11 @@ class Service {
 			       type="checkbox"
 			       name="attachments[<?php echo esc_attr( $post_id ); ?>][pda_protection_setting]"
 			       id="<?php echo esc_attr( $id ); ?>"
-				<?php echo $is_protected ? 'checked' : ''; ?>
+				 <?php checked( $is_protected ); ?>
 			/>
 			<label id="<?php echo esc_attr( $label_id ); ?>"
-			       for="<?php echo esc_attr( $id ); ?>"><?php echo __( 'Protect this file', 'prevent-direct-access' ); ?>
-			</label>
+				   for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html__( 'Protect this file', 'prevent-direct-access' ); ?>
+			</label> 
 		</div>
 		<?php
 
@@ -169,6 +172,7 @@ class Service {
 		}
 
 		wp_enqueue_style( 'pda-free-add-media-css', $this->dir_url . 'assets/style.css', array(), PDAF_VERSION, 'all' );
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 		wp_enqueue_script( 'pda-free-add-media-js', $this->dir_url . 'assets/script.js', array( 'jquery' ), PDAF_VERSION );
 	}
 }

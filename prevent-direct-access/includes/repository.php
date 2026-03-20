@@ -7,6 +7,8 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL
+
 // Class started
 class PDA_Repository {
 
@@ -167,8 +169,11 @@ class PDA_Repository {
      * return string
      */
 	function get_advance_file_by_post_id( $post_id ) {
-		$queryString = "SELECT * FROM $this->table_name WHERE post_id = $post_id";
-		$advance_file = $this->wpdb->get_row( $queryString );
+		$query_string = $this->wpdb->prepare(
+			'SELECT * FROM ' . $this->table_name . ' WHERE post_id = %d',
+			$post_id
+		);
+		$advance_file = $this->wpdb->get_row( $query_string );
 		return $advance_file;
 	}
 
@@ -180,10 +185,13 @@ class PDA_Repository {
      *
      * return Mixed
      */
-	function get_status_advance_file_by_post_id( $post_id,  $is_prevented) {
-		$queryString = "SELECT * FROM $this->table_name WHERE post_id = $post_id AND is_prevented = %s";
-		$preparation = $this->wpdb->prepare( $queryString, $is_prevented );
-		$advance_file = $this->wpdb->get_row( $preparation );
+	function get_status_advance_file_by_post_id( $post_id, $is_prevented ) {
+		$query_string = $this->wpdb->prepare(
+			'SELECT * FROM ' . $this->table_name . ' WHERE post_id = %d AND is_prevented = %s',
+			$post_id,
+			$is_prevented
+		);
+		$advance_file = $this->wpdb->get_row( $query_string );
 		return $advance_file;
 	}
 
@@ -195,8 +203,11 @@ class PDA_Repository {
      * return string
      */
 	function get_advance_files_by_host_id( $post_id ) {
-		$queryString = "SELECT * FROM $this->table_name WHERE post_id = $post_id";
-		$advance_file = $this->wpdb->get_results( $queryString );
+		$query_string = $this->wpdb->prepare(
+			'SELECT * FROM ' . $this->table_name . ' WHERE post_id = %d',
+			$post_id
+		);
+		$advance_file = $this->wpdb->get_results( $query_string );
 		return $advance_file;
 	}
 
@@ -205,9 +216,12 @@ class PDA_Repository {
      * return string
      */
 	function get_protected_post () {
-		$post_table = $this->wpdb->prefix . 'posts';
-		$queryString = "SELECT * FROM $this->table_name as tb1 INNER JOIN $post_table as tb2 ON tb1.post_id = tb2.ID WHERE tb1.is_prevented = 1 GROUP BY tb1.post_id";
-		$files = $this->wpdb->get_results($queryString);
+		$post_table  = $this->wpdb->prefix . 'posts';
+		// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from $wpdb->prefix and class property, no user input.
+		$query_string = "SELECT * FROM {$this->table_name} as tb1 INNER JOIN {$post_table} as tb2 ON tb1.post_id = tb2.ID WHERE tb1.is_prevented = 1 GROUP BY tb1.post_id";
+		$files = $this->wpdb->get_results( $query_string );
+		// phpcs:enable PluginCheck.Security.DirectDB.UnescapedDBParameter
 		return $files;
 	}
 
@@ -348,11 +362,15 @@ class PDA_Repository {
 		// Assign Global variable
 		global $wpdb;
 		$old_table = $wpdb->prefix . 'prevent_direct_access';
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$old_table'" ) != $old_table ) {
+		$query = $wpdb->prepare( 'SHOW TABLES LIKE %s', $old_table );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		if ( $wpdb->get_var( $query ) !== $old_table ) {
 			return;
 		}
+		
 		$old_data = $this->get_all_data_of_old_table();
 		foreach ( $old_data as $data ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $wpdb->insert(
                 $this->table_name,
                 array(
@@ -366,9 +384,16 @@ class PDA_Repository {
                 )
             );
 		}
+		
 		// Drop old table
-        $wpdb->query( "DROP TABLE IF EXISTS $old_table" );
-        delete_option( 'jal_db_version' );
+		// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$old_table = esc_sql( $wpdb->prefix . 'prevent_direct_access' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+		$wpdb->query( "DROP TABLE IF EXISTS {$old_table}" );
+		// phpcs:enable PluginCheck.Security.DirectDB.UnescapedDBParameter
+		
+		delete_option( 'jal_db_version' );
+		
 	}
 
 	/**
@@ -377,10 +402,13 @@ class PDA_Repository {
      * return result
      */
 	function get_all_data_of_old_table() {
+		// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
 		global $wpdb;
 		$old_table = $wpdb->prefix . 'prevent_direct_access';
 		$query = "SELECT * FROM $old_table";
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
 		$results = $wpdb->get_results( $query );
+		// phpcs:enable PluginCheck.Security.DirectDB.UnescapedDBParameter
 		return $results;
 	}
 
@@ -421,9 +449,11 @@ class PDA_Repository {
      * Check Unprotected Files
      */
     function un_protect_files() {
+		// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
         $table_name = $this->wpdb->prefix . 'postmeta';
         $query      = "SELECT post_id FROM $table_name WHERE meta_key = '_pda_protection' and meta_value = 1";
         $post_id    = $this->wpdb->get_results( $query, ARRAY_A );
+		// phpcs:enable PluginCheck.Security.DirectDB.UnescapedDBParameter
         $handle = new Pda_Free_Handle();
         foreach ( $post_id as $key => $value ) {
             $handle->un_protect_file( $value['post_id'] );
@@ -438,10 +468,11 @@ class PDA_Repository {
 	 * 3. Delete private links in wp_prevent_direct_access_free table.
 	 */
     function remove_private_links() {
+		// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
 	    $table_name = $this->wpdb->prefix . 'postmeta';
 	    $query      = "SELECT post_id FROM $table_name WHERE meta_key = '_pda_protection' and meta_value = 1";
 	    $post_ids    = $this->wpdb->get_results( $query, ARRAY_A );
-
+		// phpcs:enable PluginCheck.Security.DirectDB.UnescapedDBParameter
 	    foreach ( $post_ids as $key => $value ) {
 	    	$post_id = $value['post_id'];
 		    $advance_file = $this->get_advance_file_by_post_id( $post_id );
@@ -452,4 +483,5 @@ class PDA_Repository {
     }
 }
 
+// phpcs:enable WordPress.DB.PreparedSQL
 ?>

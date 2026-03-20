@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) die('You do not have sufficient permissions to access this file.');
-
+// phpcs:disable WordPress.WP.AlternativeFunctions
 class Pda_Function {
 
     function get_htaccess_file_path() {

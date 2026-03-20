@@ -19,9 +19,9 @@ if ( !defined( 'ABSPATH' ) ) {
 function wpfolio_pda_anylc_text( $text, $echo = false ) {
 	
 	if( $echo ) {
-		_e( $text, '' );
+		echo wp_kses_post( $text );
 	} else {
-		__( $text, '' );
+		echo wp_kses_post( $text );
 	}
 }
 
@@ -89,12 +89,15 @@ function wpfolio_pda_anylc_optin_data( $anylc_pdt = false, $return_url = '' ) {
 
 	// Takind some data
 	$theme_data 	= wp_get_theme();
-	$page 			= isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : false;
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
 
 	// If product is not passed
 	if( ! $anylc_pdt ) {
-		$anylc_pdt 		= !empty( $_GET['wpfolio_pda_anylc_pdt'] ) 			? sanitize_text_field( $_GET['wpfolio_pda_anylc_pdt'] ) 	: '';
-		$anylc_pdt 		= ( ! $anylc_pdt && !empty( $_GET['page'] ) ) 	? sanitize_text_field( $_GET['page'] ) 				: $anylc_pdt;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$anylc_pdt 		= !empty( $_GET['wpfolio_pda_anylc_pdt'] ) 			? sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_pdt'] ) ) 	: '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$anylc_pdt 		= ( ! $anylc_pdt && !empty( $_GET['page'] ) ) 	? sanitize_text_field( wp_unslash( $_GET['page'] ) ) 				: $anylc_pdt;
 
 
 
@@ -235,7 +238,7 @@ function wpfolio_pda_anylc_optin_url( $module_data = '', $optin_status = null ) 
 	}
 
 	if( !empty( $module_data['menu'] ) && !empty( $module_data['slug'] ) ) {
-		$url_data 	= parse_url( $module_data['menu'], PHP_URL_QUERY );
+		$url_data 	= wp_parse_url( $module_data['menu'], PHP_URL_QUERY );
 		$query_data	= !empty( $url_data ) ? parse_str( $url_data, $query_arr ) : array();
 
 		if( !empty( $query_arr['post_type'] ) && $optin_status >= 0 ) { // If Optin is done and post type menu
@@ -275,9 +278,12 @@ function wpfolio_pda_anylc_optout_url( $module_data = '', $optin_status = null, 
 	if( $optin_status == 1 ) {
 
 		if( ! $redirect_url ) {
-			$plugin_status 	= isset( $_GET['plugin_status'] ) 	? sanitize_text_field( $_GET['plugin_status'] ) 	: false;
-			$paged 			= isset( $_GET['paged'] ) 			? sanitize_text_field( $_GET['paged'] ) 			: false;
-			$s 				= isset( $_GET['s'] ) 				? sanitize_text_field( $_GET['s'] ) 				: false;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$plugin_status 	= isset( $_GET['plugin_status'] ) 	? sanitize_text_field( wp_unslash( $_GET['plugin_status'] ) ) 	: false;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$paged 			= isset( $_GET['paged'] ) 			? sanitize_text_field( wp_unslash( $_GET['paged'] ) ) 			: false;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$s 				= isset( $_GET['s'] ) 				? sanitize_text_field( wp_unslash( $_GET['s'] ) ) 				: false;
 
 			$redirect_url 	= add_query_arg( array( 'plugin_status' => $plugin_status, 'paged' => $paged, 's' => $s ), admin_url( 'plugins.php' ) );
 		}
@@ -307,8 +313,8 @@ function wpfolio_pda_anylc_pdt_url( $module_data = '', $type = false ) {
 
 		switch ( $type ) {
 			case 'promotion':
-
-				$promotion = !empty( $_GET['promotion'] ) ? wpfolio_pda_anylc_clean( $_GET['promotion'] ) : '';
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only use for redirect URL params.
+				$promotion = !empty( $_GET['promotion'] ) ? sanitize_text_field( wp_unslash( $_GET['promotion'] ) ) : '';
 
 				if( !empty( $promotion ) ) {
 					$promotion 		= is_array( $promotion ) ? implode( ',', $promotion ) : $promotion;
@@ -324,8 +330,8 @@ function wpfolio_pda_anylc_pdt_url( $module_data = '', $type = false ) {
 				break;
 
 			case 'offer-promotion':
-
-				$promotion = !empty( $_GET['promotion'] ) ? wpfolio_pda_anylc_clean( $_GET['promotion'] ) : '';
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only use for redirect URL params.
+				$promotion = !empty( $_GET['promotion'] ) ? sanitize_text_field( wp_unslash( $_GET['promotion'] ) ) : '';
 
 				if( !empty( $module_data['offers'] ) ) {
 					$redirect_url = add_query_arg( array( 'page' => $module_data['slug'].'-offers' ), $redirect_url );

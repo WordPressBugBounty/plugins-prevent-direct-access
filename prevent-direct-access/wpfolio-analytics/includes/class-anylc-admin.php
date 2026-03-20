@@ -84,7 +84,8 @@ class WPFolio_Pda_Anylc_Admin {
 
 	    	// WP Menu data
 	    	$wpfolio_pda_menu_data = wp_list_pluck( $menu, 2 );
-	    	$anylc_page 	= isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : null;
+	    	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$anylc_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : null;
 
 	    	foreach ($wpfolio_pda_analytics_module as $module_key => $module) {
 
@@ -154,13 +155,19 @@ class WPFolio_Pda_Anylc_Admin {
 	function wpfolio_pda_anylc_page_html() {
 
 		global $current_user, $wpfolio_pda_analytics_product;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$anylc_product_name = '';
 
-		$anylc_product_name = !empty( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		if ( isset( $_GET['page'] ) ) {
+			$anylc_product_name = sanitize_text_field(
+				wp_unslash( $_GET['page'] )
+			);
+		}
 
-		$anylc_product_name = str_replace('_optin','',$anylc_product_name);
-		
+		$anylc_product_name = str_replace( '_optin', '', $anylc_product_name );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		// if no data is set then return
+		// if no data is set then return.
 		if( ! isset( $wpfolio_pda_analytics_product[ $anylc_product_name ] ) ) {
 			return;
 		}
@@ -192,7 +199,12 @@ class WPFolio_Pda_Anylc_Admin {
 
 		global $wpfolio_pda_analytics_product;
 
-		$anylc_product_name = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$anylc_product_name = isset( $_GET['page'] )
+			? sanitize_text_field( wp_unslash( $_GET['page'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
 		$anylc_product_name = str_replace( '-offers', '', $anylc_product_name );
 
 		// if no data is set then return
@@ -230,13 +242,13 @@ class WPFolio_Pda_Anylc_Admin {
 			// If user has opt in
 			if( $opt_in == 1 ) {
 
-				$new_links['wpfolio_pda_anylc'] = '<a href="#" class="wpfolio-pda-anylc-opt-out-link" data-id="'.$module_data['id'].'">'.__('Opt Out','prevent-direct-access').'</a>';
+				$new_links['wpfolio_pda_anylc'] = '<a href="#" class="wpfolio-pda-anylc-opt-out-link" data-id="'.esc_attr( $module_data['id'] ).'">'.esc_html__('Opt Out','prevent-direct-access').'</a>';
 
 			} else {
 
 				$opt_in_link = wpfolio_pda_anylc_optin_url( $module_data, $opt_in );
 
-				$new_links['wpfolio_pda_anylc'] = '<a href="'.esc_url( $opt_in_link ).'" class="wpfolio-pda-anylc-opt-in-link">'.__('Opt In','prevent-direct-access').'</a>';
+				$new_links['wpfolio_pda_anylc'] = '<a href="'.esc_url( $opt_in_link ).'" class="wpfolio-pda-anylc-opt-in-link">'.esc_html__('Opt In','prevent-direct-access').'</a>';
 			}
 
 			$actions = array_merge( $new_links, $actions );
@@ -251,16 +263,35 @@ class WPFolio_Pda_Anylc_Admin {
 	 * @since 1.0
 	 */
 	function wpfolio_pda_anylc_admin_init_process() {
+		
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['message'], $_GET['anylc_id'], $_GET['_wpnonce'] ) ) {
 
-		if( isset( $_GET['message'] ) && 'wpfolio-pda-anylc-dismiss-notice' == $_GET['message'] && ! empty( $_GET['anylc_id'] )
-			&& isset( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'wpfolio-pda-anylc-dismiss-notice-nonce' ) 
+			$message  = sanitize_text_field( wp_unslash( $_GET['message'] ) );
+			$anylc_id = sanitize_text_field( wp_unslash( $_GET['anylc_id'] ) );
+			$nonce    = sanitize_key( wp_unslash( $_GET['_wpnonce'] ) );
+		
+			if (
+				'wpfolio-pda-anylc-dismiss-notice' === $message &&
+				wp_verify_nonce( $nonce, 'wpfolio-pda-anylc-dismiss-notice-nonce' )
 			) {
-				$anylc_id = sanitize_text_field( $_GET['anylc_id'] );
-				set_transient( 'wpfolio_pda_anylc_optin_notice_'.$anylc_id, true, 172800 );
+		
+				set_transient(
+					'wpfolio_pda_anylc_optin_notice_' . $anylc_id,
+					true,
+					172800
+				);
+			}
 		}
+		/* if( isset( $_GET['message'] ) && 'wpfolio-pda-anylc-dismiss-notice' == $_GET['message'] && ! empty( $_GET['anylc_id'] )
+			&& isset( $_GET['_wpnonce'] ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'wpfolio-pda-anylc-dismiss-notice-nonce' ) 
+			) {
+				$anylc_id = sanitize_text_field( wp_unslash( $_GET['anylc_id'] ) );
+				set_transient( 'wpfolio_pda_anylc_optin_notice_'.$anylc_id, true, 172800 );
+		} */
 
 		// Flush the redirect transient
-		if( isset( $_GET['anylc_nonce'] ) && wp_verify_nonce( $_GET['anylc_nonce'], 'wpfolio-pda-anylc-redirect-nonce' ) ) {
+		if ( isset( $_GET['anylc_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['anylc_nonce'] ) ), 'wpfolio-pda-anylc-redirect-nonce' ) ) {
 			update_option( 'wpfolio_pda_anylc_redirect', '' );
 		}
 
@@ -272,8 +303,8 @@ class WPFolio_Pda_Anylc_Admin {
 			/**
 			 * Little Tweak to avoid the infinite looping.
 			 */
-			parse_str( parse_url( $redirect, PHP_URL_QUERY ), $url_data );
-			$nonce_get = isset( $_GET['anylc_nonce'] ) ? sanitize_text_field( $_GET['anylc_nonce'] ) : '';
+			parse_str( wp_parse_url( $redirect, PHP_URL_QUERY ), $url_data );
+			$nonce_get = isset( $_GET['anylc_nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['anylc_nonce'] ) ) : '';
 			if( ! isset( $url_data['anylc_nonce'] ) || ( isset( $url_data['anylc_nonce'] ) && ! wp_verify_nonce( $nonce_get, 'wpfolio-pda-anylc-redirect-nonce' ) ) ) {
 				$redirect = add_query_arg( array( 'anylc_nonce' => wp_create_nonce( 'wpfolio-pda-anylc-redirect-nonce' ) ), $redirect );
 			}
@@ -326,7 +357,7 @@ class WPFolio_Pda_Anylc_Admin {
 				}
 			}
 		} // End of if
-
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if( isset($_GET['message']) && $_GET['message'] == 'optout_success' ) {
 			echo '<div class="updated notice wpfolio-pda-anylc-optin-notice is-dismissible">
 					<p><strong>Sorry to let you go. You are now opted out from the plugin.</strong></p>
@@ -337,26 +368,27 @@ class WPFolio_Pda_Anylc_Admin {
     	if( !empty($_GET['message']) && $_GET['message'] == 'wpfolio_pda_anylc_promotion' && !empty($_GET['wpfolio_pda_anylc_pdt']) && !empty($_GET['wpfolio_pda_anylc_promo_pdt']) ) {
 
     		$promotion 				= 1;
-    		$wpfolio_pda_anylc_promo_pdt	= sanitize_text_field( $_GET['wpfolio_pda_anylc_promo_pdt'] );
+    		$wpfolio_pda_anylc_promo_pdt	= sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_promo_pdt'] ) );
     		$promotion_pdt			= explode( ',', $wpfolio_pda_anylc_promo_pdt );
 
-    		$anylc_pdt 		= sanitize_text_field( $_GET['wpfolio_pda_anylc_pdt'] );
+    		$anylc_pdt 		= sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_pdt'] ) );
 			$anylc_pdt_data = isset( $wpfolio_pda_analytics_product[ $anylc_pdt ] ) ? $wpfolio_pda_analytics_product[ $anylc_pdt ] : false;
 
 			if( !empty($promotion_pdt) ) {
 				foreach ($promotion_pdt as $pdt_key => $pdt) {
 					if( isset( $anylc_pdt_data['promotion'][$pdt]['file'] ) ) {
-						$promotion_pdt_data[] = '<a href="'.$anylc_pdt_data['promotion'][$pdt]['file'].'">'.$anylc_pdt_data['promotion'][$pdt]['name'].'</a>';
+						$promotion_pdt_data[] = '<a href="'.esc_url( $anylc_pdt_data['promotion'][$pdt]['file'] ).'">'.esc_html( $anylc_pdt_data['promotion'][$pdt]['name'] ).'</a>';
 					}
 				}
 			}
 
 			if( $promotion_pdt_data ) {
 				echo '<div class="updated notice wpfolio-pda-anylc-optin-notice is-dismissible" style="display:block !important;">
-						<p><strong>Your Download has been started. In case if it is intrupted then download it from here. '.join(' | ', $promotion_pdt_data).'</strong></p>
+						<p><strong>Your Download has been started. In case if it is intrupted then download it from here. '.wp_kses_post( join(' | ', $promotion_pdt_data) ).'</strong></p>
 					</div>';
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -378,10 +410,13 @@ class WPFolio_Pda_Anylc_Admin {
 				// If user has opt in
 				if( $opt_in == 1 ) {
 
-					// Creating redirect URL
-					$plugin_status 	= isset( $_GET['plugin_status'] ) 	? sanitize_text_field( $_GET['plugin_status'] ) 	: false;
-					$paged 			= isset( $_GET['paged'] ) 			? sanitize_text_field( $_GET['paged'] ) 			: false;
-					$s 				= isset( $_GET['s'] ) 				? sanitize_text_field( $_GET['s'] ) 				: false;
+					// Creating redirect URL (plugins list view state only; redirect URL is nonced via wp_nonce_url below).
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading view state for redirect URL only.
+					$plugin_status 	= isset( $_GET['plugin_status'] ) 	? sanitize_text_field( wp_unslash( $_GET['plugin_status'] ) ) 	: false;
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading view state for redirect URL only.
+					$paged 			= isset( $_GET['paged'] ) 			? sanitize_text_field( wp_unslash( $_GET['paged'] ) ) 			: false;
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading view state for redirect URL only.
+					$s 				= isset( $_GET['s'] ) 				? sanitize_text_field( wp_unslash( $_GET['s'] ) ) 				: false;
 
 					$redirect_url 	= add_query_arg( array( 'plugin_status' => $plugin_status, 'paged' => $paged, 's' => $s, 'wpfolio_pda_anylc_pdt' => $module['slug'] ), admin_url( 'plugins.php' ) );
 					$redirect_url	= wp_nonce_url( $redirect_url, 'wpfolio_pda_anylc_act'.'|'.$module['slug'] );
@@ -417,8 +452,9 @@ class WPFolio_Pda_Anylc_Admin {
         $opt_in_data  = get_option( $wpfolio_pda_analytics_module[ $plugin ]['anylc_optin'] );
         $optin_status = isset( $opt_in_data['status'] ) ? $opt_in_data['status'] : -1;
 
-        // Get the current page slug
-        $page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+        // Get the current page slug.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading page for redirect check only.
+        $page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
         // Redirect only when opt-in not done
         if ( $optin_status == -1 && $page === 'wp_pda_options' ) {
@@ -449,8 +485,8 @@ class WPFolio_Pda_Anylc_Admin {
 
 			global $wpfolio_pda_analytics_product;
 
-			$anylc_pdt 		= !empty( $_GET['wpfolio_pda_anylc_pdt'] ) 				? sanitize_text_field( $_GET['wpfolio_pda_anylc_pdt'] ) 	: '';
-			$anylc_pdt 		= ( ! $anylc_pdt && !empty( $_GET['page'] ) ) 		? sanitize_text_field( $_GET['page'] ) 				: $anylc_pdt;
+			$anylc_pdt 		= !empty( $_GET['wpfolio_pda_anylc_pdt'] ) 				? sanitize_text_field( wp_unslash( $_GET['wpfolio_pda_anylc_pdt'] ) ) 	: '';
+			$anylc_pdt 		= ( ! $anylc_pdt && !empty( $_GET['page'] ) ) 		? sanitize_text_field( wp_unslash( $_GET['page'] ) ) 				: $anylc_pdt;
 
 			$anylc_pdt = str_replace('_optin','',$anylc_pdt);
 
@@ -460,11 +496,11 @@ class WPFolio_Pda_Anylc_Admin {
 			if( $anylc_pdt_data ) {
 
 				// Process Optin
-				if( $_GET['wpfolio_pda_anylc_action'] == 'optin' ) {
+				if ( isset( $_GET['wpfolio_pda_anylc_action'] ) && 'optin' === sanitize_key( wp_unslash( $_GET['wpfolio_pda_anylc_action'] ) ) ) {
 
 					// Verify nonce
-					if( ! wp_verify_nonce( $_GET['_wpnonce'], 'wpfolio_pda_anylc_act' ) ) {
-						wp_die( __('Sorry, Something happened wrong.', 'wpfolio_pda_analytic'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
+					if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'wpfolio_pda_anylc_act' ) ) {
+						wp_die( esc_html__('Sorry, Something happened wrong.', 'prevent-direct-access'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
 					}
 
 
@@ -503,11 +539,11 @@ class WPFolio_Pda_Anylc_Admin {
 
 
 				// Process Skip
-				if( $_GET['wpfolio_pda_anylc_action'] == 'skip' ) {
+				if ( isset( $_GET['wpfolio_pda_anylc_action'] ) && 'skip' === sanitize_key( wp_unslash( $_GET['wpfolio_pda_anylc_action'] ) ) ) {
 
 					// Verify nonce
-					if( ! wp_verify_nonce( $_GET['_wpnonce'], 'wpfolio_pda_anylc_act' ) ) {
-						wp_die( __('Sorry, Something happened wrong.', 'wpfolio_pda_analytic'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
+					if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'wpfolio_pda_anylc_act' ) ) {
+						wp_die( esc_html__('Sorry, Something happened wrong.', 'prevent-direct-access'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
 					}
 
 					$state_in = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
@@ -543,11 +579,11 @@ class WPFolio_Pda_Anylc_Admin {
 
 
 				// Process Opt Out
-				if( $_GET['wpfolio_pda_anylc_action'] == 'optout' ) {
+				if ( isset( $_GET['wpfolio_pda_anylc_action'] ) && 'optout' === sanitize_key( wp_unslash( $_GET['wpfolio_pda_anylc_action'] ) ) ) {
 
-					// Verify nonce
-					if( ! wp_verify_nonce( $_GET['_wpnonce'], 'wpfolio_pda_anylc_act'.'|'.$_GET['wpfolio_pda_anylc_pdt'] ) ) {
-						wp_die( __('Sorry, Something happened wrong.', 'wpfolio_pda_analytic'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
+					// Verify nonce (use $anylc_pdt for action; already sanitized above).
+					if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'wpfolio_pda_anylc_act' . '|' . $anylc_pdt ) ) {
+						wp_die( esc_html__('Sorry, Something happened wrong.', 'prevent-direct-access'), 'wpfolio_pda_anylc_err', array('back_link' => true) );
 					}
 
 

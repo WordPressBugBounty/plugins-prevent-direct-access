@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+ // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 /**
 *
 * Subscribe Form to fetch Dynamic Sidebar
@@ -20,14 +24,17 @@ if ( false === ( $pda_sidebar_content = get_transient( 'pda_sidebar_content' ) )
 		set_transient( 'pda_sidebar_content', $response['body'], DAY_IN_SECONDS * $pda_fss_expire );
 
 		if( !empty( $section_1 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-1">'.$section_1.'</div>';	
 		}
 
 		if( !empty( $section_2 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-2">'.$section_2.'</div>';	
 		}
 
 		if( !empty( $section_3 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-3">'.$section_3.'</div>';	
 		}
 	}
@@ -44,14 +51,17 @@ if ( false === ( $pda_sidebar_content = get_transient( 'pda_sidebar_content' ) )
 		$section_3 = !empty( $json->section_3 ) ? stripslashes( $json->section_3 ) : '';
 
 		if( !empty( $section_1 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-1">'.$section_1.'</div>';	
 		}
 
 		if( !empty( $section_2 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-2">'.$section_2.'</div>';	
 		}
 
 		if( !empty( $section_3 ) ){
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is trusted and served from PDA-owned API.
 			echo '<div class="main_container pda-section-3">'.$section_3.'</div>';	
 		}
 	}

@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
 *
 * FAQ Tab
@@ -45,12 +48,12 @@
 			</li>
 			<li><?php echo esc_html__("Your WordPress folders are structured differently from usual","prevent-direct-access");?> </li>
 		</ul>
-		<p><?php echo esc_html__("For example, your domain’s root folder is located at, let's say,","prevent-direct-access")?> <code><?php echo __("home/","prevent-direct-access");?></code> <?php echo esc_html__("directory but your WordPress files are put under ","prevent-direct-access");?><code><?php echo esc_html__("home/wp/","prevent-direct-access");?></code> <?php echo esc_html__("directory. In such cases, our plugin can't insert our .htaccess codes properly, and so, you have to manually update your .htaccess located at ","prevent-direct-access");?> <code><?php echo __("home/wp/","prevent-direct-access");?></code> <?php echo esc_html__("directory with our plugin's custom rewrite rules.","prevent-direct-access");?></p>
+		<p><?php echo esc_html__("For example, your domain’s root folder is located at, let's say,","prevent-direct-access")?> <code><?php echo esc_html__("home/","prevent-direct-access");?></code> <?php echo esc_html__("directory but your WordPress files are put under ","prevent-direct-access");?><code><?php echo esc_html__("home/wp/","prevent-direct-access");?></code> <?php echo esc_html__("directory. In such cases, our plugin can't insert our .htaccess codes properly, and so, you have to manually update your .htaccess located at ","prevent-direct-access");?> <code><?php echo esc_html__("home/wp/","prevent-direct-access");?></code> <?php echo esc_html__("directory with our plugin's custom rewrite rules.","prevent-direct-access");?></p>
 		
 		<a target="_blank" href="<?php echo esc_url("https://preventdirectaccess.com/faq/#faq3");?>"><?php echo esc_html__("Official FAQ","prevent-direct-access");?></a></p>	
 
 
-		<p><?php echo esc_html__("For more information, please visit our","prevent-direct-access");?>
+		<p><?php echo esc_html__("For more information, please visit our","prevent-direct-access");?> 
 
 
 

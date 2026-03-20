@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
-
+ // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 // Class Started
 class PDALogger {
 

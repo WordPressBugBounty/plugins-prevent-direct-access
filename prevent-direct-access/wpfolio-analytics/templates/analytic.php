@@ -5,7 +5,7 @@
  * @package WPFolio Pda Analytic
  * @since 1.0.0
  */
-
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 if ( !defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -15,9 +15,13 @@ $site_uid = isset( $optin_form_data['site_uid'] ) ? sanitize_text_field( $optin_
 set_transient( 'wpfolio_pda_state_' . $site_uid, $state, 10 * MINUTE_IN_SECONDS );
 // pass to template as hidden field (add to $optin_form_data)
 $optin_form_data['state'] = $state;
-
-if( isset($_GET['my_notice']) && $_GET['my_notice'] === 'error' ) {
-     echo '<div class="notice wpfolio-custom notice-error is-dismissible"><p>❌ Something went wrong. Please try again.</p></div>';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$my_notice = isset( $_GET['my_notice'] ) ? sanitize_text_field( wp_unslash( $_GET['my_notice'] ) ) : '';
+if ( 'error' === $my_notice ) {
+	printf(
+		'<div class="notice wpfolio-custom notice-error is-dismissible"><p>%s</p></div>',
+		esc_html__( '❌ Something went wrong. Please try again.', 'prevent-direct-access' )
+	);
 }
 
 
@@ -30,14 +34,17 @@ if( isset($_GET['my_notice']) && $_GET['my_notice'] === 'error' ) {
 
 <div class="wrap wpfolio-pda-anylc-optin">
 
-	<?php if( isset($_GET['error']) && $_GET['error'] == 'wpfolio_pda_anylc_error' ) { ?>
+	<?php 
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$error = isset( $_GET['error'] )  ? sanitize_key( wp_unslash( $_GET['error'] ) ) : '';
+	if ( 'wpfolio_pda_anylc_error' === $error ) { ?>
 	<div class="error">
 		<?php echo wp_kses_post( '<p><strong>Sorry, something went wrong. Please contact us at <a href="mailto:support@ppwp-live.local">support@ppwp-live.local</a>.</strong></p>' );
 		?>
 	</div>
 	<?php } ?>
 
-	<form method="POST" action="<?php echo WPFOLIO_PDA_ACTION_URL;?>">
+	<form method="POST" action="<?php echo esc_url( WPFOLIO_PDA_ACTION_URL );?>">
 		<div class="wpfolio-pda-anylc-optin-wrap" style="width: 650px; margin: 0 auto; margin-top: 70px;">
 
 			<div>
@@ -101,7 +108,7 @@ if( isset($_GET['my_notice']) && $_GET['my_notice'] === 'error' ) {
 				</div>
 			</div>
 			<div class="wpfolio-pda-anylc-terms">
-				<a href="<?php echo WPFOLIO_PDA_PRIVACY_URL; ?>" target="_blank"><?php echo esc_html__( 'Privacy Policy','prevent-direct-access' );?></a> - <a href="<?php echo WPFOLIO_PDA_TERM_URL; ?>" target="_blank"><?php echo esc_html__( 'Terms of Service','prevent-direct-access' );?></a>
+				<a href="<?php echo esc_url( WPFOLIO_PDA_PRIVACY_URL ); ?>" target="_blank"><?php echo esc_html__( 'Privacy Policy','prevent-direct-access' );?></a> - <a href="<?php echo esc_url( WPFOLIO_PDA_TERM_URL ); ?>" target="_blank"><?php echo esc_html__( 'Terms of Service','prevent-direct-access' );?></a>
 			</div>
 		</div>
 	</form>

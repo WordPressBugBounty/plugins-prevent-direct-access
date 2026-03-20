@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
  *
  * Add Affiliate in PDA Lite
@@ -14,7 +17,7 @@ if ( ! class_exists('PDA_Lite_Affiliate' ) ){
          * Render UI
          */
         function render_ui() {
-            $url = PDA_LITE_BASE_URL . "public/assets/pda-gold-affiliate-banner(1200x480).png";
+            $url = PDA_LITE_BASE_URL . "public/assets/pda-gold-affiliate-banner-1200x480.png";
             ?>
             <div class="wrap">
                 <h2><?php esc_html_e( 'Prevent Direct Access Gold: Invite & Earn', 'prevent-direct-access' ); ?></h2>

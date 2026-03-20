@@ -42,12 +42,12 @@ var pda_media = (function ($) {
 			}
 			if (window.pdaLiteProtectProcessing) {
 			  if (checked) {
-				toastr.success("Great! You've successfully protected this file.", '', {
+				toastr.success("Only authorized user roles can access this file. Search engines and AI crawlers cannot access it.", '', {
 				  timeOut: 2000
 				});
 				window.pdaLiteProtectProcessing = false;
 			  } else if (checked === false) {
-				toastr.success("Great! You've successfully unprotected this file.", '', {
+				toastr.success("This file is publicly accessible. Search engines and AI crawlers may access and index it.", '', {
 				  timeOut: 2000
 				});
 				window.pdaLiteProtectProcessing = false;
