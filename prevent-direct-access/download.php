@@ -20,9 +20,7 @@ require_once 'includes/helper.php';
 ignore_user_abort( true );
 // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit
 if ( function_exists( 'set_time_limit' ) ) {
-	// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit, WordPress.PHP.NoSilencedErrors.Discouraged
-	@set_time_limit( 0 );
-	// phpcs:enable WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_set_time_limit, WordPress.PHP.NoSilencedErrors.Discouraged
+	@set_time_limit( 0 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 }// disable the time limit for this script
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $is_direct_access = isset( $_GET['is_direct_access'] ) ? sanitize_text_field( wp_unslash( $_GET['is_direct_access'] ) ) : '';

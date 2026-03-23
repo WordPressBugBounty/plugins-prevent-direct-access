@@ -73,7 +73,7 @@ jQuery(function ($) {
                     action: 'pda_store_deactivation_feedback',
                     nonce: PDADeactivate.nonce,
                     reason: $('input[name="reason"]:checked').val() || '',
-                    not_working_reason: $('#pda-better-plugin').val() || '',
+                    not_working_reason: $('#not_working_reason').val() || '',
                     optional_detail: $('#optional_detail').val() || '',
                     pluginType: pluginType,
                     better_plugin_name : $('#better_plugin_name').val() || '',

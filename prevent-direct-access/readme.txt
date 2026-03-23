@@ -4,7 +4,7 @@ Tags: folder protection, protection, downloads, uploads, copy protection
 Requires at least: 4.7
 Requires PHP: 5.6.1
 Tested up to: 6.9.4
-Stable tag: 2.8.8.5
+Stable tag: 2.8.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,9 @@ The Lite version of this plugin only supports Apache, Nginx, and IIS single site
 8. Once your file is protected, it’ll have a red border.
 
 == Changelog ==
+= 2.8.8.6 March 23, 2026 =
+* [Bugfix] Fixed an issue where the reason for plugin deactivation was not being captured correctly.
+
 = 2.8.8.5 March 20, 2026 =
 * [Improvement] Resolved WordPress Coding Standards (WPCS) issues.
 * [Improvement] Enhanced overall code quality and strengthened security.

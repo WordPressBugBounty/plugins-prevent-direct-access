@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * PDA Menu and settings
  *
  */
- // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+
 /**
  * Create Setting Menu
  */
-
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function pda_menu() {
     // phpcs:disable
     add_menu_page(
@@ -27,11 +27,11 @@ function pda_menu() {
     // phpcs:enable
 }
 
-
+ // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 /**
  * Manage PDA Setting
  */
-function pda_settings() {
+function pda_settings() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 
     // Check current user role and access
     if(!current_user_can('manage_options')) {
