@@ -239,10 +239,14 @@ function wpfolio_pda_anylc_plugin_activation( $plugin, $network_activation ) {
 		} elseif( ! empty( $wpfolio_pda_analytics_module[ $plugin ]['redirect_page'] ) ) {
 
 			if( $optin_status == 1 || $optin_status == 2) {
-				$redirect_page	= $wpfolio_pda_analytics_module[ $plugin ]['slug'];
-			}else{
-				$redirect_page	= $wpfolio_pda_analytics_module[ $plugin ]['tempslug'];
-			}
+                if ( get_option( 'pda_is_licensed' ) && defined( 'PDA_GOLD_V3_VERSION' ) ) {
+                    $redirect_page = 'pda-gold';
+                } else {
+                    $redirect_page    = $wpfolio_pda_analytics_module[ $plugin ]['slug'];
+                }    
+            }else{
+                $redirect_page    = $wpfolio_pda_analytics_module[ $plugin ]['tempslug'];
+            }
 
 			$pos 			= strpos( $redirect_page, '?post_type' );
 

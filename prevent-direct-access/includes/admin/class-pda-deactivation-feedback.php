@@ -15,7 +15,9 @@ class PDA_Deactivation_Feedback {
 
     private function __construct() {
         
-        define( 'PDA_API_SECRET', 'pda_1006a8a0fb312e92885d641701076333' );
+        if ( ! defined( 'PDA_API_SECRET' ) ) {
+            define( 'PDA_API_SECRET', 'pda_1006a8a0fb312e92885d641701076333' );
+        }
         define( 'PDA_PRODUCT_ID', 9 );
         define( 'PDA_DEACTIVATION_ENDPOINT', 'https://analytics.madeforwp.com/wp-json/pda/v1/deactivation' );
         
