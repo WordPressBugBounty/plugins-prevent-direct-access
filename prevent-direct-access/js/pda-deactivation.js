@@ -1,5 +1,5 @@
 jQuery(function ($) {
-
+    
     if (typeof PDADeactivate === 'undefined') {
         return;
     }
@@ -7,7 +7,7 @@ jQuery(function ($) {
     let deactivateUrl = '';
     let pluginType = ''; // 'free' or 'pro'
     var slug = ''; // 'free' or 'pro'
-
+    var pluginName = ''; // e.g. 'Prevent Direct Access' or 'Prevent Direct Access Gold'
     /* ===============================
        Capture deactivate click
        =============================== */
@@ -24,19 +24,22 @@ jQuery(function ($) {
              if (id === 'deactivate-prevent-direct-access') {
                 pluginType = 'free';
                 slug = 'prevent-direct-access';
+                pluginName = 'Prevent Direct Access';
             } else if (id === 'deactivate-prevent-direct-access-gold') {
                 pluginType = 'pro';
                 slug = 'prevent-direct-access-gold';
+                pluginName = 'Prevent Direct Access Gold';
             } else {
                 return; // Not our plugin
             }
-
+            
             if (!this.id.includes(slug)) {
                 return;
             }else{
                 e.preventDefault();
-            }
-
+            } 
+            
+            $('#pda-feedback-overlay .pda-plugin-name').text(pluginName);
             // Open modal (flex-safe)
             $('#pda-feedback-overlay').data('plugin', pluginType).addClass('is-open');
         }

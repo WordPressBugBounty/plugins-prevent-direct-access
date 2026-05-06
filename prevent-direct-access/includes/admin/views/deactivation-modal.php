@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="pda-feedback-overlay">
 	<div id="pda-feedback-modal">
 		<h3>
-			<?php esc_html_e( "Before you go, could you tell us why you're deactivating Prevent Direct Access?", 'prevent-direct-access' ); ?>
+			<?php esc_html_e( "Before you go, could you tell us why you're deactivating", 'prevent-direct-access' ); ?>
+			<span class="pda-plugin-name"></span>?
 		</h3>
 
 		<label>
