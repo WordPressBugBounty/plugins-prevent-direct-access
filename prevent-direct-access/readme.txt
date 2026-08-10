@@ -2,9 +2,9 @@
 Contributors: gaupoit, rexhoang, wpdafiles, buildwps
 Tags: folder protection, protection, downloads, uploads, copy protection
 Requires at least: 4.7
-Requires PHP: 5.6.1
-Tested up to: 6.9.4
-Stable tag: 2.8.8.8
+Requires PHP: 7.0
+Tested up to: 7.0.3
+Stable tag: 2.8.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,17 @@ The Lite version of this plugin only supports Apache, Nginx, and IIS single site
 8. Once your file is protected, it’ll have a red border.
 
 == Changelog ==
+
+= 2.8.9.0 Aug 07, 2026 =
+* [Improvement] Improved WordPress.org compatibility by addressing Plugin Check requirements.
+
+= 2.8.8.9 Aug 07, 2026 =
+* [Improvement] Added explicit permission checks to the file-protection and link-regeneration background actions.
+* [Improvement] Added explicit administrator checks to the settings and IP-restriction background actions.
+* [Improvement] Sanitized the filename used in the file download header.
+* [Improvement] Switched the private-link token lookup to use an exact match instead of a pattern match.
+* [Improvement] Updated the documented minimum required PHP version.
+* [Bugfix] Fixed an issue where the IP Restriction settings field did not redisplay previously saved IP addresses after a page refresh.
 
 = 2.8.8.8 May 06, 2026 =
 * [Bugfix] Fixed an issue where the plugin name was not displaying correctly in the deactivation modal.

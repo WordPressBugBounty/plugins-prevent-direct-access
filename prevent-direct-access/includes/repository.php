@@ -233,7 +233,7 @@ class PDA_Repository {
      * return string
      */
 	function get_advance_file_by_url( $url ) {
-		$advance_file = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM $this->table_name WHERE url LIKE %s", $url ) );
+		$advance_file = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM $this->table_name WHERE url = %s", $url ) );
 		return $advance_file;
 	}
 

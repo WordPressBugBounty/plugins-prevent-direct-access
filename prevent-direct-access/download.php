@@ -505,7 +505,8 @@ function send_file_to_client( $file ) {
 
 	if ( is_image( $file ) == false && is_pdf( $mimetype ) == false && is_video( $mimetype ) == false && is_audio( $mimetype ) == false ) {
 		$file_name = wp_basename( $file );
-		header( "Content-Disposition: attachment; filename=$file_name" );
+		$file_name = str_replace( array( "\r", "\n", '"' ), '', $file_name );
+		header( 'Content-Disposition: attachment; filename="' . $file_name . '"' );
 	}
 
 	//set header

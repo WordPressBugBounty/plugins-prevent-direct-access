@@ -135,7 +135,7 @@ class PDA_SettingsPage
                     <div style="margin-bottom:10px; margin-top: 10px">
                         <p><?php echo esc_html__('Deny list these IP addresses: stop the following IP addresses from accessing private download links','prevent-direct-access') ?></p>
                     </div>
-                    <input id="pda_free_pl_blacklist_ips" name="ip_lock" value="<?php esc_attr($ip_lock); ?>" /><br>
+                    <input id="pda_free_pl_blacklist_ips" name="ip_lock" value="<?php echo esc_attr($ip_lock); ?>" /><br>
                     <p class="description">Use the asterisk (*) for wildcard matching, e.g. 7.7.7.* will match IP from 7.7.7.0 to 7.7.7.255</p><br>
                     <input type="submit" value="<?php esc_attr_e('Save Changes','prevent-direct-access'); ?>" class="button button-primary" name="btn_ip_lock" id="pda_free_submit_btn">
                 </form>

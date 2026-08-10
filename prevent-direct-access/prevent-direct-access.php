@@ -3,11 +3,13 @@
 Plugin Name: Prevent Direct Access
 Plugin URI: https://preventdirectaccess.com
 Description: Prevent Direct Access provides a simple solution to prevent Google and AI bot indexing as well as the public from accessing your files without permission. This plugin is required for our Gold version to work properly.
-Version: 2.8.8.8
+Version: 2.8.9.0
 Author: BWPS
 Author URI: https://preventdirectaccess.com
 Tags: files, management
-License: GPL
+Requires PHP: 7.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: prevent-direct-access
 Domain Path: /languages
 */ 
@@ -23,7 +25,7 @@ define('PDA_DOWNLOAD_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source
 define('PDA_SIDEBAR_API', 'https://preventdirectaccess.com/wp-json/pda-fss/v1/content');
 define('PDA_PRICING_PAGE', 'https://preventdirectaccess.com/pricing/?utm_source=user-website&utm_medium=%s&utm_campaign=%s');
 define('PDA_TEXTDOMAIN', 'prevent-direct-access');
-define('PDAF_VERSION', '2.8.8.8');
+define('PDAF_VERSION', '2.8.9.0');
 define('PDA_LITE_BASE_URL', plugin_dir_url(__FILE__));
 define('PDA_LITE_BASE_DIR', plugin_dir_path(__FILE__));
 define('PDA_LITE_PLUGIN_BASE_NAME', plugin_basename( __FILE__ ) );
@@ -505,13 +507,6 @@ class Pda_Admin
             </div>
             <?php
         }
-
-        if ($column_name == 'hits_count' ) {
-            $hits_count = ( isset($advance_file) && isset($advance_file->hits_count) ) ? $advance_file->hits_count : 0;
-            ?>
-            <label><?php echo esc_html( $hits_count ); ?></label>
-            <?php
-        }
     }
 
     /**
@@ -536,6 +531,12 @@ class Pda_Admin
         if (! isset($_REQUEST['security_check'], $_POST['id'], $_POST['is_prevented']) ) {
             wp_die(
                 esc_html__( 'Invalid data.', 'prevent-direct-access' )
+            );
+        }
+
+        if (! current_user_can('upload_files') ) {
+            wp_die(
+                esc_html__( 'You do not have permission to do this.', 'prevent-direct-access' )
             );
         }
 
@@ -597,6 +598,12 @@ class Pda_Admin
         if (! isset($_REQUEST['security_check'], $_POST['id']) ) {
             wp_die(
                 esc_html__( 'Invalid data', 'prevent-direct-access' )
+            );
+        }
+
+        if (! current_user_can('upload_files') ) {
+            wp_die(
+                esc_html__( 'You do not have permission to do this.', 'prevent-direct-access' )
             );
         }
 
@@ -951,6 +958,12 @@ class Pda_Admin
             );
         }
 
+        if (! current_user_can('manage_options') ) {
+            wp_die(
+                esc_html__( 'You do not have permission to do this.', 'prevent-direct-access' )
+            );
+        }
+
         $nonce = sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) );
         if (! wp_verify_nonce($nonce, 'pda_ajax_nonce_v3') ) {
             wp_die(
@@ -988,6 +1001,16 @@ class Pda_Admin
      */
     public function pda_lite_update_ip_restriction_settings()
     {
+        if (! current_user_can('manage_options') ) {
+            return wp_send_json_error(
+                array(
+                'success' => false,
+                'message' => __( 'You do not have permission to do this.', 'prevent-direct-access' ),
+                ),
+                403
+            );
+        }
+
         $nonce = isset($_REQUEST['security_check']) ? sanitize_text_field( wp_unslash( $_REQUEST['security_check'] ) ) : false;
         if (! $nonce || ! wp_verify_nonce($nonce, 'pda_ajax_nonce_v3') ) {
             return wp_send_json_error(
